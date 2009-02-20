@@ -6,7 +6,7 @@ module MultiSite::ControllerExtensions
     end
 
     def current_site
-      @current_site || current_site = Site.find_for_host(request.host)
+      @current_site || current_site = Site.find_for_host(request.host) # defaults to first site with empty domain if none match
     end
     
     def current_site=(value=nil)
@@ -17,7 +17,7 @@ module MultiSite::ControllerExtensions
 
   end
   
-  private
+  # protected
   
     def set_current_site
       Page.current_site = current_site
