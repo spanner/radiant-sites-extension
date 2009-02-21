@@ -4,7 +4,20 @@ Created by Sean Cribbs, November 2007. Inspired by the original virtual_domain
 behavior.
 
 Multi Site allows you to host multiple websites on a single Radiant
-installation.
+installation. This is an extended version that also gives you a flexible
+way to scope other model classes to the current site. To scope one or 
+more of the standard radiant classes, do this:
+
+  MultiSite::Config.scoped_models = [:layouts, :snippets]
+
+To scope a model defined in another extension, do this:
+
+  class Something < ActiveRecord::Base
+    is_site_scoped
+    ...
+  end
+  
+(The additions are all very alpha at the moment but properly tested.)
 
 Each site has its own independent sitemap/page-tree and these attributes:
 
