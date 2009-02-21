@@ -35,8 +35,3 @@ class MultiSiteExtension < Radiant::Extension
 
 end
 
-module MultiSite
-  class SiteNotFound < Exception
-    
-  end
-end
