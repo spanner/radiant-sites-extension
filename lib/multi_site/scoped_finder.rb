@@ -10,9 +10,13 @@ module MultiSite::ScopedFinder
     Site.send(:has_many, base.to_s.pluralize.underscore.intern)
     base.extend ClassMethods
 
+    # all (?) find operations, including attribute-based finders, end up calling find_every
+    # so we extend that rather than trying to guess all the variations
+
     class << base
-      alias_method_chain :find, :site
-      alias_method_chain :count, :site
+      %w{find_every count average minimum maximum sum}.each do |getter|
+        alias_method_chain getter.intern, :site
+      end
     end
 
     def set_site
@@ -22,16 +26,17 @@ module MultiSite::ScopedFinder
   end
   
   module ClassMethods
-
-    def find_with_site(*args)
-      check_current_site
-      current_site.send(self.to_s.pluralize.underscore.intern).find_without_site(*args)
+    %w{find_every count average minimum maximum sum}.each do |getter|
+      define_method("#{getter}_with_site") do |*args|
+        check_current_site
+        current_site.send(self.to_s.pluralize.underscore.intern).send("#{getter}_without_site".intern, *args)
+      end
     end
-
-    def count_with_site(*args)
-      check_current_site
-      current_site.send(self.to_s.pluralize.underscore.intern).count_without_site(*args)
-    end
+    
+    # def find_every_with_site(*args)
+    #   check_current_site
+    #   current_site.send(self.to_s.pluralize.underscore.intern).find_every_without_site(*args)
+    # end
 
     def current_site
       Page.current_site
