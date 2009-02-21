@@ -18,6 +18,7 @@ class MultiSiteExtension < Radiant::Extension
   end
 
   def activate
+    ActiveRecord::Base.send :include, MultiSite::BaseExtensions
     ApplicationController.send :include, MultiSite::ControllerExtensions
     Page.send :include, MultiSite::PageExtensions
     SiteController.send :include, MultiSite::SiteControllerExtensions
