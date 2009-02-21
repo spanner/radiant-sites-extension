@@ -1,4 +1,5 @@
 require_dependency 'application'
+require 'multi_site/config'
 
 class MultiSiteExtension < Radiant::Extension
   version "0.3"
@@ -28,11 +29,13 @@ class MultiSiteExtension < Radiant::Extension
     # Add site navigation
     admin.pages.index.add :top, "site_subnav"
     admin.tabs.add "Sites", "/admin/sites", :visibility => [:admin]
+    
+    MultiSite::Config.scoped_models.each do |model|
+      model.to_s.classify.constantize.send(:is_site_scoped)   # nb. can't pass around classes because it borks in dev mode when extensions are not reloaded
+    end
   end
 
   def deactivate
     admin.tabs.remove "Sites"
   end
-
 end
-

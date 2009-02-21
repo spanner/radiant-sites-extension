@@ -5,7 +5,11 @@ module MultiSite::BaseExtensions
   
   module ClassMethods
     def is_site_scoped
-      include MultiSite::ScopedFinder
+      include MultiSite::ScopedFinder unless is_site_scoped?
+    end
+    
+    def is_site_scoped?
+      included_modules.include?(MultiSite::ScopedFinder)
     end
   end
 end

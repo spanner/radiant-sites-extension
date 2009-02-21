@@ -6,7 +6,7 @@ unless Snippet.column_names.include?('site_id')
 end
 
 class Snippet
-  is_site_scoped
+  is_site_scoped     # it may already be declared in MultiSite::Config.scoped_models, but the repetition doesn't matter
 end
 
 describe "Site-scoped snippet", :type => :model do
