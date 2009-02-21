@@ -72,7 +72,6 @@ describe "Site-scoped snippet", :type => :model do
     
   describe "on retrieval" do
 
-
     before do
       20.times { |i| Snippet.create!(:name => "snippet#{i}") }
       @mysnippetid = Snippet.find_by_name('snippet10').id
@@ -88,14 +87,24 @@ describe "Site-scoped snippet", :type => :model do
       @snippet.site.should == sites(:mysite)
     end
 
+    it "should find_by_name a snippet from the current site" do
+      lambda {@snippet = Snippet.find_by_name('snippet10')}.should_not raise_error(ActiveRecord::RecordNotFound)
+      @snippet.should_not be_nil
+      @snippet.site.should == sites(:mysite)
+    end
+
     it "should not find a snippet from another site" do
       lambda {@snippet = Snippet.find(@yoursnippetid)}.should raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it "should not find_by_name a snippet from another site" do
+      @snippet = Snippet.find_by_name('snippet30').should be_nil
     end
 
     it "should count only the snippets from this site" do
       Snippet.count(:all).should == 20
     end
-    
+
     describe "when no site is specified" do
       before do
         Page.current_site = nil
