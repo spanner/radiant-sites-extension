@@ -9,7 +9,6 @@ module MultiSite::ScopedValidation
         configuration[:message] += " on this site"
         attr.push(configuration)
       end
-      
       validates_uniqueness_of_without_site(*attr)  
     end
     

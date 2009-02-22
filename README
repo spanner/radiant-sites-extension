@@ -14,15 +14,21 @@ in another extension, give it a side_id column and do this:
     is_site_scoped
     ...
   end
-  
+
+These additions are all very alpha at the moment, but properly specced.
+There is also some slightly provisional code in there at the moment to extend 
+validate_uniquess_of so that site scope is automatically added. It has to 
+take effect at an early stage of initialisation so it relies on the presence 
+of a site_id column rather than the is_site_scoped call. Like I say, 
+provisional. It may be that is_site_scoped should kick in automatically for 
+any already loaded classes that have a site_id column.
+
 To scope the admin interface so that layouts and snippets are separate for
 each site (as well as pages) and only admin users can switch between sites,
-you need the scoped_admin extension as well. The configuration functions that 
-used to be here have been taken out.
-  
-(These additions are all very alpha at the moment, but properly specced.)
+you need the scoped_admin extension as well. It'll be up on github shortly.
 
-Each site has its own independent sitemap/page-tree and these attributes:
+Meanwhile, in the original multi_site, each site has its own independent 
+sitemap/page-tree and these attributes:
 
   name: Whatever you want to call the site
   domain: A Ruby regular expression (without the //) to match the request
