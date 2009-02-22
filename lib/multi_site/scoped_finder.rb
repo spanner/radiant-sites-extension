@@ -13,6 +13,7 @@ module MultiSite::ScopedFinder
     # all (?) find operations, including attribute-based finders, end up calling find_every
     # so we extend that rather than trying to guess all the variations
 
+
     class << base
       %w{find_every count average minimum maximum sum}.each do |getter|
         alias_method_chain getter.intern, :site
@@ -21,7 +22,8 @@ module MultiSite::ScopedFinder
 
     def set_site
       self.site ||= self.class.current_site!
-    end    
+    end
+    
   end
   
   module ClassMethods
@@ -30,7 +32,7 @@ module MultiSite::ScopedFinder
         current_site!.send(self.to_s.pluralize.underscore.intern).send("#{getter}_without_site".intern, *args)
       end
     end
-
+    
     def current_site!
       raise(MultiSite::SiteNotFound, "no site found", caller) unless current_site && current_site.is_a?(Site)
       current_site

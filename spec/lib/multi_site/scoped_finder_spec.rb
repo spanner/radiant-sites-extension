@@ -57,6 +57,25 @@ describe "Site-scoped snippet", :type => :model do
       @in_my_site.site.should_not be_nil
       @in_my_site.site.should == sites(:mysite)
     end
+    
+    describe "with site-scoped validation" do
+      before do
+        Page.current_site = sites(:mysite)
+        Snippet.create!(:name => 'testy')
+      end
+      it "should be invalid if its name is already in use on this site" do
+        snippet = Snippet.new(:name => 'testy')
+        snippet.valid?.should_not be_true
+        snippet.errors.should_not be_nil
+        snippet.errors.on(:name).should_not be_nil
+      end
+
+      it "should be valid even though its name is already in use on another site" do
+        Page.current_site = sites(:yoursite)
+        snippet = Snippet.new(:name => 'testy')
+        snippet.valid?.should be_true
+      end
+    end
   end 
   
   describe "when no site is specified" do
