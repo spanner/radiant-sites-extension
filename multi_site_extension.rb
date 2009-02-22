@@ -1,11 +1,10 @@
 require_dependency 'application'
-require 'multi_site/config'
 
 class MultiSiteExtension < Radiant::Extension
   version "0.3"
   description %{ Enables virtual sites to be created with associated domain names.
                  Also scopes the sitemap view to any given page (or the root of an
-                 individual site). }
+                 individual site) and allows model classes to be scoped. }
   url "http://radiantcms.org/"
 
   define_routes do |map|
@@ -26,13 +25,10 @@ class MultiSiteExtension < Radiant::Extension
     Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
     ResponseCache.send :include, MultiSite::ResponseCacheExtensions
     Radiant::Config["dev.host"] = 'preview' if Radiant::Config.table_exists?
+
     # Add site navigation
     admin.pages.index.add :top, "site_subnav"
     admin.tabs.add "Sites", "/admin/sites", :visibility => [:admin]
-    
-    MultiSite::Config.scoped_models.each do |model|
-      model.to_s.classify.constantize.send(:is_site_scoped)   # nb. can't pass around classes because it borks in dev mode when extensions are not reloaded
-    end
   end
 
   def deactivate

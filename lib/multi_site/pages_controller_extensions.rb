@@ -15,7 +15,11 @@ module MultiSite::PagesControllerExtensions
   def index_with_root
     if params[:root] # If a root page is specified
       @homepage = Page.find(params[:root])
-      @site = @homepage.root.site
+      current_site = @site = @homepage.root.site
+      set_current_site
+    elsif current_site
+      @site = current_site
+      @homepage = current_site.homepage
     elsif @site = Site.first(:order => "position ASC") # If there is a site defined
       if @site.homepage
         @homepage = @site.homepage
