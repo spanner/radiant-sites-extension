@@ -2,7 +2,7 @@ module MultiSite::ControllerExtensions
   def self.included(base)
     base.class_eval do
       helper_method :current_site
-      before_filter :set_current_site
+      prepend_before_filter :set_current_site   # sometimes we need current_site in order to get current_user
     end
 
     def current_site
