@@ -24,6 +24,8 @@ module MultiSite::PagesControllerExtensions
       if @site.homepage
         @homepage = @site.homepage
       end
+    else
+      raise(MultiSite::SiteNotFound, "no site found", caller) # need to catch this and redirect to sites admin so as to create a site
     end
     @homepage ||= Page.find_by_parent_id(nil)
     response_for :plural
