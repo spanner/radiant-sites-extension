@@ -31,18 +31,29 @@ module MultiSite::ScopedFinder
   end
   
   module ClassMethods
-    
+
     # these are all the same. they turn eg. Reader.count(:all) into current_site.readers.count(:all)
-    # but for fiddling purposes it's helpful to separate the groups
+    # but for present tinkering it's nice to separate the groups
     
-    def find_every_with_site(*args)
-      current_site!.send(plural_symbol_for_class).send(:find_every_without_site, *args)
+    def find_every_with_site(*options)
+      with_scope(:find => {:conditions => scope_condition}) do
+        send :find_every_without_site, *options
+      end
     end
-        
+    
     %w{count average minimum maximum sum}.each do |getter|
       define_method("#{getter}_with_site") do |*args|
-        current_site!.send(self.to_s.pluralize.underscore.intern).send("#{getter}_without_site".intern, *args)
+        with_scope(:find => {:conditions => scope_condition}) do
+          send "#{getter}_without_site".intern, *args
+        end
       end
+    end
+
+    # override this if eg you want to return both site-specific and shared resources
+    # in that case you'd want something like "users.site_id = #{current_site!.id} OR shared = 1"
+
+    def scope_condition
+      "site_id = #{current_site!.id}"
     end
     
     def plural_symbol_for_class

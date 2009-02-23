@@ -17,7 +17,7 @@
 #sites
   - Site.find(:all).each do |site|
     - name = (@site == site) ? "<strong>#{site.name}</strong>" : site.name
-    = link_to name, admin_pages_path(:root => site.homepage)
+    = link_to name, admin_pages_path(:site => site.id)
 
 - if Radiant::Config['multi_site.scoped?']
   - content_for :page_scripts do

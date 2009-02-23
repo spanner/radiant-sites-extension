@@ -1,7 +1,7 @@
 module MultiSite::PagesControllerExtensions
   def self.included(base)
     base.class_eval {
-      alias_method_chain :index, :root
+      alias_method_chain :index, :site
       alias_method_chain :continue_url, :site
       alias_method_chain :remove, :back
       responses.destroy.default do 
@@ -11,12 +11,16 @@ module MultiSite::PagesControllerExtensions
       end
     }
   end
+  
+  # root parameter doesn't make sense in classes other than Page
+  # which doesn't matter here but will do in other extensions
+  # site parameter is just a site id
 
-  def index_with_root
-    if params[:site] # If a root page is specified
+  def index_with_site
+    if params[:site]
       current_site = @site = Site.find(params[:site])
 
-    elsif params[:root] # If a root page is specified
+    elsif params[:root]
       @homepage = Page.find(params[:root])
       current_site = @site = @homepage.root.site
 

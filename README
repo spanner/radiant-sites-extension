@@ -19,9 +19,7 @@ These additions are all very alpha at the moment, but properly specced.
 There is also some slightly provisional code in there at the moment to extend 
 validate_uniquess_of so that site scope is automatically added. It has to 
 take effect at an early stage of initialisation so it relies on the presence 
-of a site_id column rather than the is_site_scoped call. Like I say, 
-provisional. It may be that is_site_scoped should kick in automatically for 
-any already loaded classes that have a site_id column.
+of a site_id column rather than the is_site_scoped call. That will get cleaner.
 
 To scope the admin interface so that layouts and snippets are separate for
 each site (as well as pages) and only admin users can switch between sites,
