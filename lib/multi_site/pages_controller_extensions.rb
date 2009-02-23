@@ -13,21 +13,22 @@ module MultiSite::PagesControllerExtensions
   end
 
   def index_with_root
-    if params[:root] # If a root page is specified
+    if params[:site] # If a root page is specified
+      current_site = @site = Site.find(params[:site])
+
+    elsif params[:root] # If a root page is specified
       @homepage = Page.find(params[:root])
       current_site = @site = @homepage.root.site
-      set_current_site
+
     elsif current_site
       @site = current_site
-      @homepage = current_site.homepage
-    elsif @site = Site.first(:order => "position ASC") # If there is a site defined
-      if @site.homepage
-        @homepage = @site.homepage
-      end
+
     else
-      raise(MultiSite::SiteNotFound, "no site found", caller) # need to catch this and redirect to sites admin so as to create a site
+      current_site = @site = Site.first(:order => "position ASC") || raise(MultiSite::SiteNotFound, "no site found", caller) 
     end
-    @homepage ||= Page.find_by_parent_id(nil)
+
+    set_current_site if @site
+    @homepage ||= @site.homepage || Page.find_by_parent_id(nil)
     response_for :plural
   end
 
