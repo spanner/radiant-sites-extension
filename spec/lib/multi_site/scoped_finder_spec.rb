@@ -5,17 +5,19 @@ unless Snippet.column_names.include?('site_id')
   Snippet.reset_column_information
 end
 
-class Snippet
-  is_site_scoped     # it may already be declared in MultiSite::Config.scoped_models, but the repetition doesn't matter
-end
-
-describe "Site-scoped snippet", :type => :model do
+describe "Site-scoped Snippet", :type => :model do
   dataset :sites
+  
+  Snippet.send :is_site_scoped
   
   before do
     Page.current_site = sites(:mysite)
   end
   
+  it "should report itself site_scoped" do
+    Snippet.is_site_scoped?.should be_true
+  end
+
   it "should have a site association" do
     Snippet.reflect_on_association(:site).should_not be_nil
   end

@@ -15,13 +15,12 @@ module MultiSite::ControllerExtensions
       end
     end
 
-  end
-  
   # protected
   
     def set_current_site
       Page.current_site = current_site
       true
     end
-
+  end
 end
+

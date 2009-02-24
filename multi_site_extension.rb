@@ -18,7 +18,7 @@ class MultiSiteExtension < Radiant::Extension
   end
 
   def activate
-    ActiveRecord::Base.send :include, MultiSite::BaseExtensions
+    ActiveRecord::Base.send :include, MultiSite::ScopedModel
     ActiveRecord::Validations::ClassMethods.send :include, MultiSite::ScopedValidation
     ApplicationController.send :include, MultiSite::ControllerExtensions
 
