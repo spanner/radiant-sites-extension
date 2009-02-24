@@ -1,0 +1,23 @@
+- content_for :page_css do
+  :sass
+    #content
+      padding-top: 2.25em
+      position: relative
+    #site_jumper 
+      position: absolute
+      top: 0
+      left: 0
+      font-size: 80%
+      line-height: 2em
+      padding-left: 1.5em
+      padding-top: 0.25em
+      a, a:visited
+        color: black
+        margin-right: 10px
+- unless current_user.site
+  #site_jumper
+    %form
+      %label
+        change site: 
+      %select{:id => "site_chooser", :name => "site", :class => 'discreet', :onChange => 'this.form.submit()'}
+        = options_from_collection_for_select(Site.find(:all), 'id', 'name', current_site.id)

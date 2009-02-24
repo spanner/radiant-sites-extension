@@ -15,24 +15,24 @@ module MultiSite::PagesControllerExtensions
   # root parameter doesn't make sense in classes other than Page
   # which doesn't matter here but will do in other extensions
   # site parameter is just a site id
+  # site_id cookie isn't needed here but is very useful elsewhere
 
   def index_with_site
-    if params[:site]
-      current_site = @site = Site.find(params[:site])
+    if params[:site] && site = Site.find(params[:site])
+      current_site = @site = site
 
-    elsif params[:root]
-      @homepage = Page.find(params[:root])
-      current_site = @site = @homepage.root.site
+    elsif params[:root] && page = Page.find(params[:root])
+      current_site = @site = page.root.site
 
-    elsif current_site
-      @site = current_site
+    elsif cookies[:site_id] && !cookies[:site_id].nil? && site = Site.find(cookies[:site_id])
+      current_site = @site = site
 
     else
-      current_site = @site = Site.first(:order => "position ASC") || raise(MultiSite::SiteNotFound, "no site found", caller) 
+      current_site || current_site = @site = Site.first(:order => "position ASC") || raise(MultiSite::SiteNotFound, "no site found", caller) 
     end
 
     set_current_site if @site
-    @homepage ||= @site.homepage || Page.find_by_parent_id(nil)
+    @homepage ||= current_site.homepage || Page.find_by_parent_id(nil)
     response_for :plural
   end
 
