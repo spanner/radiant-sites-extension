@@ -1,11 +1,17 @@
 require File.dirname(__FILE__) + "/../../spec_helper"
 
+describe 'extended AR::Base' do
+  it "should respond to is_site_scoped" do
+    ActiveRecord::Base.respond_to?(:is_site_scoped).should be_true
+  end
+end
+
 unless Snippet.column_names.include?('site_id')
   Snippet.connection.execute("ALTER TABLE snippets ADD site_id INT")    # dirty dirty dirty!
   Snippet.reset_column_information
 end
 
-describe "Site-scoped Snippet", :type => :model do
+describe "Site-scoped, unshareable Snippet", :type => :model do
   dataset :sites
   
   Snippet.send :is_site_scoped
@@ -60,7 +66,7 @@ describe "Site-scoped Snippet", :type => :model do
       @in_my_site.site.should == sites(:mysite)
     end
     
-    describe "with site-scoped validation" do
+    describe "with site-scope" do
       before do
         Page.current_site = sites(:mysite)
         Snippet.create!(:name => 'testy')
@@ -90,9 +96,7 @@ describe "Site-scoped Snippet", :type => :model do
     end
   end
   
-    
   describe "on retrieval" do
-
     before do
       20.times { |i| Snippet.create!(:name => "snippet#{i}") }
       @mysnippetid = Snippet.find_by_name('snippet10').id
@@ -138,97 +142,69 @@ describe "Site-scoped Snippet", :type => :model do
       it "should raise a SiteNotFound error for a nonexistent snippet" do
         lambda {@snippet = Snippet.find('fish')}.should raise_error(MultiSite::SiteNotFound)
       end
-    end
-    
-    
+    end  
   end
 end
 
 
+unless User.column_names.include?('site_id')
+  User.connection.execute("ALTER TABLE users ADD site_id INT")    # oh, eric. he's doing it again.
+  User.reset_column_information
+end
 
+describe "Site-scoped, shareable User", :type => :model do
+  User.send :is_site_scoped, :shareable => true
+  dataset :sites
+  dataset :site_users
 
+  before do
+    Page.current_site = sites(:mysite)
+  end
 
+  describe "on instantiation with no site" do
+    before do      
+      @user = User.new(:name => 'test user', :login => 'test', :password => 'password', :email => 'test@spanner.org', :password_confirmation => 'password' )
+    end
+    
+    it "should validate without being given the current site" do
+      @user.valid?.should be_true
+      @user.site.should be_nil
+    end
+  end 
 
+  describe "on retrieval" do
+    
+    it "should find a user from the current site" do
+      lambda {User.find(user_id(:myuser))}.should_not raise_error(ActiveRecord::RecordNotFound)
+    end
 
+    it "should find_by_name a user from the current site" do
+      User.find_by_name('myuser').should_not be_nil
+    end
 
+    it "should not find a user from another site" do
+      lambda {User.find(user_id(:youruser))}.should raise_error(ActiveRecord::RecordNotFound)
+    end
 
+    it "should not find_by_name a user from another site" do
+      User.find_by_name('youruser').should be_nil
+    end
 
-# this works too and is a lot cleaner but I can't test retrieval scoping this way
+    it "should find a user with no site" do
+      lambda {User.find(user_id(:shareduser))}.should_not raise_error(ActiveRecord::RecordNotFound)
+    end
 
+    it "should find_by_name a user with no site" do
+      User.find_by_name('shareduser').should_not be_nil
+    end
 
-# class StubModel < ActiveRecord::Base
-#   self.abstract_class = true
-# 
-#   def self.columns
-#     @columns ||= [];
-#   end
-# 
-#   def self.column(name, sql_type = nil, default = nil, null = true)
-#     columns << ActiveRecord::ConnectionAdapters::Column.new(name.to_s, default, sql_type.to_s, null)
-#   end
-# 
-#   def save(validate = true)
-#     validate ? valid? : true
-#   end
-# end
-# 
-# class TestModel < StubModel
-#   column :name, :string  
-#   column :site_id, :string  
-#   is_site_scoped
-# end
-# 
-# describe "Site-scoped model", :type => :model do
-#   dataset :sites
-#   
-#   before do
-#     Page.current_site = sites(:mysite)
-#   end
-#   
-#   it "should have a site association" do
-#     TestModel.reflect_on_association(:site).should_not be_nil
-#   end
-# 
-#   it "should respond to current_site" do
-#     TestModel.respond_to?(:current_site).should be_true
-#   end
-# 
-#   it "should not respond to current_site=" do
-#     TestModel.respond_to?(:current_site=).should be_false
-#   end
-# 
-#   it "should return the corrent current site" do
-#     TestModel.send(:current_site).should == sites(:mysite)
-#   end
-#   
-#   describe "when instantiated" do
-#     before do
-#       @in_my_site = TestModel.new
-#     end
-#   
-#     it "should not necessarily have a site" do
-#       @in_my_site.site.should be_nil
-#     end
-# 
-#     it "should accept a site" do
-#       @in_my_site.site = sites(:mysite)
-#       @in_my_site.site.should == sites(:mysite)
-#     end
-#   end
-# 
-#   describe "when validated" do
-#     before do
-#       @in_my_site = TestModel.new
-#       @in_my_site.valid?
-#     end
-#     
-#     it "should have been given the current site" do
-#       @in_my_site.site.should == sites(:mysite)
-#     end
-#   end  
-# end
-# 
-# 
-# 
-# 
-# 
+    it "should count the users from this site or with no site" do
+      # core radiant users_dataset creates 5 users with no site. Site_users_dataset creates 2 with this site and 2 with none
+      User.count(:all).should == 9  
+    end
+
+  end
+  
+  
+  
+end

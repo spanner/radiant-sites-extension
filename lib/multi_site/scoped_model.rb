@@ -11,33 +11,40 @@ module MultiSite
         false
       end
       
+      # only option at the moment is :shareable, which we take to mean that sites are optional:
+      # if true it causes us not to set the site automatically or validate its presence
+      # and to extend the scoping conditions so that objects with no site are returned as 
+      # well as objects with the specified site
+      # that is, anything without a site is considered to be shared among all of them
+      # the default is false
+      
       def is_site_scoped(options={})
         return if is_site_scoped?
         
         options = {
-          :site_required => true,
-          :site_validated => false,
-          :site_populated => true,
-          :site_associated => true
+          :shareable => false
         }.merge(options)
-        
-        class_eval do
+
+        class_eval <<-EO
           extend MultiSite::ScopedModel::ScopedClassMethods
           include MultiSite::ScopedModel::ScopedInstanceMethods
-        end
+        EO
         
         belongs_to :site
-        before_validation :set_site if options[:site_populated]
-        validates_presence_of :site if options[:site_required]
-        validates_associated :site if options[:site_validated]
-        Site.send(:has_many, plural_symbol_for_class) if options[:site_associated]
+        Site.send(:has_many, plural_symbol_for_class)
+
+        before_validation :set_site unless options[:shareable]
+        validates_presence_of :site unless options[:shareable]
 
         class << self
+          attr_accessor :shareable
           alias_method_chain :find_every, :site
           %w{count average minimum maximum sum}.each do |getter|
             alias_method_chain getter.intern, :site
           end
         end
+        
+        self.shareable = options[:shareable]
       end
     end
 
@@ -64,9 +71,9 @@ module MultiSite
       def current_site
         Page.current_site
       end
-
+            
       def site_scope_condition
-        "site_id = #{current_site!.id}"
+        self.shareable ? "site_id = #{current_site.id} OR site_id IS NULL" : "site_id = #{current_site!.id}"
       end
     
       def plural_symbol_for_class
