@@ -30,10 +30,10 @@ class MultiSiteExtension < Radiant::Extension
 
     # Add site navigation
     admin.pages.index.add :top, "site_subnav"
-    admin.tabs.add "Sites", "/admin/sites", :visibility => [:admin]
+    # admin.tabs.add "Sites", "/admin/sites", :visibility => [:admin]
   end
 
   def deactivate
-    admin.tabs.remove "Sites"
+    # admin.tabs.remove "Sites"
   end
 end
