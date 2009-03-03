@@ -1,6 +1,9 @@
 class Site < ActiveRecord::Base
   acts_as_list
+  belongs_to :created_by, :class_name => 'User'
+  belongs_to :updated_by, :class_name => 'User'
   order_by "position ASC"
+
   class << self
     def find_for_host(hostname = '')
       default, normal = find(:all).partition {|s| s.domain.blank? }
