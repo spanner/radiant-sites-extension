@@ -33,6 +33,9 @@ make sure that there is a default site available, and for most purposes you
 can leave that alone: in the absence of any other site it will get every
 request, and everything should just work.
 
+This version of multi_site does cause failures in radiant's main tests, 
+though, usually when a site is required but the tests don't supply it.
+
 == Scoped resources
 
 To scope the admin interface so that layouts and snippets are separate for
