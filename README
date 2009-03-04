@@ -20,13 +20,18 @@ validate_uniquess_of so that site scope is automatically added. It has to
 take effect at an early stage of initialisation so it relies on the presence 
 of a site_id column rather than the is_site_scoped call. That will get cleaner.
 
+== Installation
+
+  rake ray:extension:install name="multi-site" hub="spanner"
+  rake radiant:extensions:multi_site:update
+
 == Compatibility
 
 This is not quite a drop-in replacement for the basic multi-site, but only 
 because it requires that a site be defined. A migration has been added to 
 make sure that there is a default site available, and for most purposes you 
 can leave that alone: in the absence of any other site it will get every
-request.
+request, and everything should just work.
 
 == Scoped resources
 

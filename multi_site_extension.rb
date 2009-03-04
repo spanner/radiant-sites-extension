@@ -31,7 +31,7 @@ class MultiSiteExtension < Radiant::Extension
     
     Radiant::Config["dev.host"] = 'preview' if Radiant::Config.table_exists?
 
-    admin.pages.index.add :top, "site_subnav"     # only contains scripting: we've put the site chooser in the masthead by overriding the controller method @subtitle@
+    admin.pages.index.add :top, "site_subnav"     # only contains scripting: we've put the site chooser in the masthead by overriding the helper method @subtitle@
 
     # admin.tabs.add "Sites", "/admin/sites", :visibility => [:admin]
   end

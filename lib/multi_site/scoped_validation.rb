@@ -18,6 +18,6 @@ module MultiSite::ScopedValidation
     
     # the respond_to? condition is to block multiple definitions in dev mode. stacks otherwise.
     
-    base.alias_method_chain :validates_uniqueness_of, :site unless base.respond_to?(:validates_uniqueness_of_without_site)
+    base.alias_method_chain :validates_uniqueness_of, :site unless base.instance_methods.include?(:validates_uniqueness_of_without_site)
   end
 end
