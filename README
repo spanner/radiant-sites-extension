@@ -6,26 +6,35 @@ behavior.
 Multi Site allows you to host multiple websites on a single Radiant
 installation. 
 
-This is an extended version that also gives you a flexible
+This is an extended version by spanner that also gives you a flexible
 way to scope other model classes to the current site. To scope a model defined 
-in another extension, give it a side_id column and do this:
+in another extension, give it a site_id column and do this:
 
   class Something < ActiveRecord::Base
     is_site_scoped
     ...
   end
 
-These additions are all very alpha at the moment, but properly specced.
 There is also some slightly provisional code in there at the moment to extend 
 validate_uniquess_of so that site scope is automatically added. It has to 
 take effect at an early stage of initialisation so it relies on the presence 
 of a site_id column rather than the is_site_scoped call. That will get cleaner.
 
+== Compatibility
+
+This is not quite a drop-in replacement for the basic multi-site, but only 
+because it requires that a site be defined. A migration has been added to 
+make sure that there is a default site available, and for most purposes you 
+can leave that alone: in the absence of any other site it will get every
+request.
+
+== Scoped resources
+
 To scope the admin interface so that layouts and snippets are separate for
 each site (as well as pages) and only admin users can switch between sites,
-you need the scoped_admin extension as well. It'll be up on github shortly.
+you need the scoped-admin extension as well. 
 
-Meanwhile, in the original multi_site, each site has its own independent 
+Meanwhile, back in the original multi_site, each site has its own independent 
 sitemap/page-tree and these attributes:
 
   name: Whatever you want to call the site

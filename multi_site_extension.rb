@@ -23,7 +23,6 @@ class MultiSiteExtension < Radiant::Extension
     ApplicationController.send :include, MultiSite::ControllerExtensions
     Radiant::AdminUI.send :include, MultiSite::AdminUI         # UI is a singleton and already loaded, and this doesn't get there in time. so:
     Radiant::AdminUI.instance.site = Radiant::AdminUI.load_default_site_regions
-
     Page.send :include, MultiSite::PageExtensions
     SiteController.send :include, MultiSite::SiteControllerExtensions
     Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
@@ -32,7 +31,7 @@ class MultiSiteExtension < Radiant::Extension
     
     Radiant::Config["dev.host"] = 'preview' if Radiant::Config.table_exists?
 
-    admin.pages.index.add :top, "site_subnav"     # just javascript now
+    admin.pages.index.add :top, "site_subnav"     # only contains scripting: we've put the site chooser in the masthead by overriding the controller method @subtitle@
 
     # admin.tabs.add "Sites", "/admin/sites", :visibility => [:admin]
   end

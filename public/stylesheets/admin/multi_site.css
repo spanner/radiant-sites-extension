@@ -33,7 +33,7 @@
   position: relative;
 }
 
-#content div.form-area p.domain .textbox, #content div.form-area p.homepage .textbox, #content div.form-area p.subtitle .textbox {
+#content div.form-area p.domain .textbox, #content div.form-area p.homepage .textbox, #content div.form-area p.subtitle .textbox, #content div.form-area p.subtitle select {
   font-family: Georgia,Palatino,"Times New Roman",Times,serif;
   font-size: 140%;
   width: 100%;
