@@ -12,7 +12,7 @@ module MultiSite::HelperExtensions
       end
 
       def subtitle
-        site_jumper if current_user
+        current_user && admin? ? site_jumper : current_site.subtitle
       end
       
       def site_jumper
