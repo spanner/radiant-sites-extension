@@ -1,5 +1,5 @@
 #site_jumper{:style => 'padding: 0 4px 0 4px; margin: 6px 0 0 0; border: 5px solid #c00; background-color: #c00; font-size: 80%; font-style: normal; float: left;'}
-  %form{:action => admin_pages_url}
+  - form_tag do
     %label{:for => 'site_chooser'}
       jump to: 
     %select{:id => "site_chooser", :name => "site_id", :onChange => 'this.form.submit()'}
