@@ -5,13 +5,7 @@ module MultiSite::AdminUI
 
       attr_accessor :site
       alias_method :sites, :site
-
-      def load_default_regions_with_site
-        @site = load_default_site_regions
-      end
-
-      alias_method_chain :load_default_regions, :site
-
+      
       protected
 
         def load_default_site_regions
