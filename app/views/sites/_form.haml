@@ -9,9 +9,7 @@
           = f.text_field :name, :class => "textbox"
 
         %p.subtitle
-          %br/
           %label{:for => "site_subtitle"} and subtitle
-          %br/
           = f.text_field :subtitle, :class => "textbox"
           
 
@@ -19,18 +17,15 @@
         %p.domain
           %label{:for => "site_domain"} 
             Domain pattern
-          %br/
           = f.text_field :domain, :class => "textbox"
         %p.domain
           %label{:for => "site_base_domain"} 
             Base domain name
-          %br/
           = f.text_field :base_domain, :class => "textbox"
           
       - form.edit_homepage do
         %p.homepage
           %label{:for => "site_homepage_id"} Homepage ID
-          %br/
           = f.text_field :homepage_id, :class => "textbox"
 
     %p.formnote
