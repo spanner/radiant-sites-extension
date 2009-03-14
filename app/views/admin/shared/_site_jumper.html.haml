@@ -1,11 +1,28 @@
-#site_jumper{:style => 'padding: 0 4px 0 4px; margin: 6px 0 0 0; border: 5px solid #c00; background-color: #c00; font-size: 80%; font-style: normal; float: left;'}
-  - form_tag '', {:method => 'get'} do
-    %label{:for => 'site_chooser'}
-      jump to: 
-    %select{:id => "site_chooser", :name => "site_id", :onChange => 'this.form.submit()'}
-      = options_from_collection_for_select(Site.find(:all), 'id', 'name', current_site.id)
-    = link_to "new site", new_site_url
-    |
-    = link_to "edit sites", sites_url
+- unless current_user.respond_to?(:site) && current_user.site
+  - content_for :page_css do
+    :sass
+      #content
+        padding-top: 2.5em
+        position: relative
+      #site_jumper 
+        position: absolute
+        top: -2px
+        left: 8px
+        font-size: 80%
+        line-height: 2em
+        padding-left: 1.5em
+        padding-top: 0.25em
+        color: #666
+        a, a:visited
+          color: #999
+  #site_jumper
+    - form_tag '', {:method => 'get'} do
+      %label{:for => 'site_chooser'}
+        jump to: 
+      %select{:id => "site_chooser", :name => "site_id", :onChange => 'this.form.submit()'}
+        = options_from_collection_for_select(Site.find(:all), 'id', 'name', current_site.id)
+      = link_to "new site", new_site_url
+      |
+      = link_to "edit sites", sites_url
 
 

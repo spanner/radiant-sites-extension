@@ -7,11 +7,4 @@
         var id = row.id.split("-").last();
         window.location = <%= admin_pages_path.to_json %> + "?root=" + id;
       };
-  - if @homepage
-    %p#breadcrumbs
-      - [@homepage, @homepage.ancestors].flatten.reverse.each do |page|
-        - if page != @homepage
-          = link_to page.title, admin_pages_path(:root => page.id)
-          &gt;
-        - else
-          %em= page.title
+  = render :partial => 'admin/shared/site_jumper'
