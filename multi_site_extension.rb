@@ -40,3 +40,6 @@ class MultiSiteExtension < Radiant::Extension
   def deactivate
   end
 end
+
+class ActiveRecord::SiteNotFound < Exception; end
+

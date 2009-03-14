@@ -1,0 +1,7 @@
+- @page_title = 'Site Not Configured'
+%h1=@page_title
+%p
+  This installation is not configured correctly: please 
+  = link_to "log in", login_url
+  and make sure that a site is configured to respond either to all requests or to the host
+  = request.host

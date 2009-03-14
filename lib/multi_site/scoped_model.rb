@@ -1,5 +1,4 @@
 module MultiSite
-  class SiteNotFound < Exception; end
   
   module ScopedModel
     def self.included(base)
@@ -50,6 +49,7 @@ module MultiSite
 
     module ScopedClassMethods
       def find_every_with_site(options)
+        # logger.warn ">>> #{self}.find_every_with_site(#{options.inspect})"
         with_scope(:find => {:conditions => site_scope_condition}) do
           find_every_without_site(options)
         end
@@ -64,7 +64,7 @@ module MultiSite
       end
 
       def current_site!
-        raise(MultiSite::SiteNotFound, "no site found", caller) unless current_site && current_site.is_a?(Site)
+        raise(ActiveRecord::SiteNotFound, "no site found", caller) unless current_site && current_site.is_a?(Site)
         current_site
       end
 

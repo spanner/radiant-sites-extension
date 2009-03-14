@@ -4,6 +4,16 @@ module MultiSite::ControllerExtensions    # for inclusion into ApplicationContro
     base.class_eval do
       helper_method :current_site
       prepend_before_filter :set_current_site   # sometimes we need current_site in order to get current_user
+
+      def rescue_action_in_public_with_site(exception)
+        case exception
+          when ActiveRecord::SiteNotFound
+            render :template => "site/not_configured", :layout => false
+          else
+            rescue_action_in_public_without_site
+        end
+      end
+      alias_method_chain :rescue_action_in_public, :site
     end
 
     def current_site
@@ -26,12 +36,11 @@ module MultiSite::ControllerExtensions    # for inclusion into ApplicationContro
       end
     end
 
-  # protected
-  
     def set_current_site
       Page.current_site = current_site
       true
     end
+
   end
 end
 

@@ -92,7 +92,7 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
     end
 
     it "should raise a SiteNotFound error" do
-      lambda {@in_my_site = Snippet.create!(:name => 'test snippet in mysite')}.should raise_error(MultiSite::SiteNotFound)
+      lambda {@in_my_site = Snippet.create!(:name => 'test snippet in mysite')}.should raise_error(ActiveRecord::SiteNotFound)
     end
   end
   
@@ -136,11 +136,11 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
       end
 
       it "should raise a SiteNotFound error for a snippet that exists" do
-        lambda {@snippet = Snippet.find(@yoursnippetid)}.should raise_error(MultiSite::SiteNotFound)
+        lambda {@snippet = Snippet.find(@yoursnippetid)}.should raise_error(ActiveRecord::SiteNotFound)
       end
 
       it "should raise a SiteNotFound error for a nonexistent snippet" do
-        lambda {@snippet = Snippet.find('fish')}.should raise_error(MultiSite::SiteNotFound)
+        lambda {@snippet = Snippet.find('fish')}.should raise_error(ActiveRecord::SiteNotFound)
       end
     end  
   end

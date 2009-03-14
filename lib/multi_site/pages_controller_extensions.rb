@@ -30,7 +30,7 @@ module MultiSite::PagesControllerExtensions
       @site = site
 
     elsif !current_site
-      @site = Site.first(:order => "position ASC") || raise(MultiSite::SiteNotFound, "no site found", caller) 
+      @site = Site.first(:order => "position ASC") || raise(ActiveRecord::SiteNotFound, "no site found", caller) 
     end
 
     if @site
