@@ -1,6 +1,7 @@
 module MultiSite::PagesControllerExtensions
   def self.included(base)
     base.class_eval {
+      alias_method_chain :find_current_site, :root
       alias_method_chain :index, :site
       alias_method_chain :continue_url, :site
       alias_method_chain :remove, :back
@@ -11,36 +12,22 @@ module MultiSite::PagesControllerExtensions
       end
     }
   end
-  
-  # root parameter doesn't make sense in classes other than Page
-  # which doesn't matter here but will do in other extensions
-  # site_id cookie is useful for eg. when we come back after editing a page
-  # but really it's more useful in other extensions
+
+  def find_current_site_with_root
+    logger.warn ">>> find_current_site_with_root"
+    site_from_root || find_current_site_without_root
+  end
+
+  def site_from_root
+    logger.warn ">>> site_from_root"
+    if params[:root] && @homepage = Page.find(params[:root])
+      @site = @homepage.root.site
+    end
+  end
 
   def index_with_site
-    
-    if params[:site_id] && site = Site.find(params[:site_id])
-      @site = site
-
-    elsif params[:root] && page = Page.find(params[:root])
-      @site = page.root.site
-      @homepage = page
-
-    elsif site = site_from_cookie
-      @site = site
-
-    elsif !current_site
-      @site = Site.first(:order => "position ASC") || raise(ActiveRecord::SiteNotFound, "no site found", caller) 
-    end
-
-    if @site
-      self.current_site = @site
-      set_current_site
-      set_site_cookie
-    end
-    
-    @homepage ||= current_site.homepage || Page.find_by_parent_id(nil)
-    response_for :plural
+    @site ||= current_site
+    @homepage ||= @site.homepage || Page.find_by_parent_id(nil)
   end
 
   def remove_with_back
