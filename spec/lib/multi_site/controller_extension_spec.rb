@@ -47,7 +47,9 @@ describe 'Multisite extended controller', :type => :controller do
     before do
       @host = 'nosite.domain.com'
       @site = sites(:default)
+      @cookies = {}
       controller.request.stub!(:host).and_return(@host)
+      controller.stub!(:cookies).and_return(@cookies)
     end
     
     it "should choose the default site" do
