@@ -14,12 +14,10 @@ module MultiSite::PagesControllerExtensions
   end
 
   def find_current_site_with_root
-    logger.warn ">>> find_current_site_with_root"
     site_from_root || find_current_site_without_root
   end
 
   def site_from_root
-    logger.warn ">>> site_from_root"
     if params[:root] && @homepage = Page.find(params[:root])
       @site = @homepage.root.site
     end

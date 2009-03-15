@@ -20,12 +20,6 @@ module MultiSite::ControllerExtensions    # for inclusion into ApplicationContro
       @current_site || self.current_site = find_current_site
     end
     
-    # this is separate here so it can be alias_chained in eg pages_controller
-    
-    def find_current_site 
-      site_from_param || site_from_cookie || site_from_host
-    end
-
     def current_site=(site=nil)
       if site && site.is_a?(Site)
         @current_site = site
@@ -33,16 +27,15 @@ module MultiSite::ControllerExtensions    # for inclusion into ApplicationContro
       end
     end
 
-    def site_from_cookie
-      cookies[:site_id] && Site.find(cookies[:site_id]) rescue nil
+    # this is separated out so it can be alias_chained
+    # in eg resource controller and pages controller
+    
+    def find_current_site
+      site_from_host
     end
-
-    def site_from_param
-      params[:site_id] && Site.find(params[:site_id]) rescue nil
-    end
-
+    
     def site_from_host
-      Site.find_for_host(request.host) # defaults to first site with empty domain if none match better
+      Site.find_for_host(request.host) # defaults to first site with empty domain if none match request domain
     end
 
     def set_current_site

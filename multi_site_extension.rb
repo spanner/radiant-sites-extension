@@ -21,14 +21,15 @@ class MultiSiteExtension < Radiant::Extension
     ActiveRecord::Base.send :include, MultiSite::ScopedModel
     ActiveRecord::Validations::ClassMethods.send :include, MultiSite::ScopedValidation
     ApplicationController.send :include, MultiSite::ControllerExtensions
+    Admin::ResourceController.send :include, MultiSite::ResourceControllerExtensions
+    Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
+    SiteController.send :include, MultiSite::SiteControllerExtensions
     unless defined? admin.site
       # UI is a singleton and already loaded
       Radiant::AdminUI.send :include, MultiSite::AdminUI
       admin.site = Radiant::AdminUI.load_default_site_regions
     end
     Page.send :include, MultiSite::PageExtensions
-    SiteController.send :include, MultiSite::SiteControllerExtensions
-    Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
     ResponseCache.send :include, MultiSite::ResponseCacheExtensions
     ApplicationHelper.send :include, MultiSite::HelperExtensions
     
