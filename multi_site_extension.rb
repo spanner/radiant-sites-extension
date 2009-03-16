@@ -18,21 +18,25 @@ class MultiSiteExtension < Radiant::Extension
   end
 
   def activate
+    # Model extensions
     ActiveRecord::Base.send :include, MultiSite::ScopedModel
     ActiveRecord::Validations::ClassMethods.send :include, MultiSite::ScopedValidation
-    ApplicationController.send :include, MultiSite::ControllerExtensions
-    Admin::ResourceController.send :include, MultiSite::ResourceControllerExtensions
-    Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
-    SiteController.send :include, MultiSite::SiteControllerExtensions
-    unless defined? admin.site
-      # UI is a singleton and already loaded
-      Radiant::AdminUI.send :include, MultiSite::AdminUI
-      admin.site = Radiant::AdminUI.load_default_site_regions
-    end
     Page.send :include, MultiSite::PageExtensions
     ResponseCache.send :include, MultiSite::ResponseCacheExtensions
+
+    # Controller extensions
+    ApplicationController.send :include, MultiSite::ControllerExtensions
+    SiteController.send :include, MultiSite::SiteControllerExtensions
+    Admin::ResourceController.send :include, MultiSite::ResourceControllerExtensions
+    Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
+
+    # Helper extensions
     ApplicationHelper.send :include, MultiSite::HelperExtensions
-    
+
+    # AdminUI extensions
+    Radiant::AdminUI.send :include, MultiSite::AdminUI unless defined? admin.site # UI is a singleton and already loaded
+    admin.site = Radiant::AdminUI.load_default_site_regions
+
     Radiant::Config["dev.host"] = 'preview' if Radiant::Config.table_exists?
 
     admin.pages.index.add :top, "site_subnav"
