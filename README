@@ -6,6 +6,8 @@ behavior.
 Multi Site allows you to host multiple websites on a single Radiant
 installation. 
 
+== (Forked)
+
 This is an extended version by spanner that also gives you a flexible
 way to scope other model classes to the current site. To scope a model defined 
 in another extension, give it a site_id column and do this:
@@ -20,29 +22,71 @@ validate_uniquess_of so that site scope is automatically added. It has to
 take effect at an early stage of initialisation so it relies on the presence 
 of a site_id column rather than the is_site_scoped call. That will get cleaner.
 
-== Installation
+=== Status
 
-  rake ray:extension:install name="multi-site" hub="spanner"
+Hm. Late beta? This is pretty solid now and quite thoroughly tested but a week
+or two in the wild wouldn't hurt.
+
+=== Installation
+
+  git clone 
+  rake radiant:extensions:multi_site:migrate
   rake radiant:extensions:multi_site:update
 
-== Compatibility
+or maybe soon just:
 
-This is not quite a drop-in replacement for the basic multi-site, but only 
-because it requires that a site be defined. A migration has been added to 
-make sure that there is a default site available, and for most purposes you 
-can leave that alone: in the absence of any other site it will get every
-request, and everything should just work.
+  rake ray:extension:install name="multi-site" hub="spanner"
 
-This version of multi_site does cause failures in radiant's main tests, 
-though, usually when a site is required but the tests don't supply it.
+=== Compatibility
 
-== Scoped resources
+This ought to be a drop-in replacement for the original multi_site. It differs
+from the original in that it will throw an error if no site can be found, but 
+one of the migrations will make sure that a default site is defined. In the 
+normal run of events that site will catch all requests, and all manner of thing
+will be well.
 
-To scope the admin interface so that layouts and snippets are separate for
-each site (as well as pages) and only admin users can switch between sites,
-you need the scoped-admin extension as well. 
+This version of multi_site does cause failures in radiant's main tests, usually
+when a site is required but the tests don't supply it. I will probably add a 
+'lax mode' at some point that doesn't mind if no site is defined.
 
-Meanwhile, back in the original multi_site, each site has its own independent 
+=== Scoped resources
+
+If you want to site-scope a model class (let's say you want your photo galleries 
+to be site-specific as well as your pages), all you have to do is add this to the
+top of the class
+
+  is_site_scoped
+
+If you want the option to share some instances between sites (say you want 
+some of your users to be confined to a site but some to work on all of them):
+
+  is_site_scoped :shareable => true
+
+The scoping takes effect at the ActiveRecord level - it wraps a with_scope round
+every call to find (actually, to find_every) and a few other methods. If an 
+object is out of site scope it is as though it didn't exist. This usually means 
+your controller and view code hardly need to change at all: they just see fewer
+objects.
+
+There's more about this in the wiki:
+
+  http://wiki.github.com/spanner/radiant-multi-site-extension
+
+=== Examples
+
+The scoped_admin extension uses this method to confine layouts, snippets and (some) 
+users to sites. It only takes four lines of code and two partials:
+
+  http://github.com/spanner/radiant-scoped-admin-extension
+
+We've also forked the paperclipped_multisite extension to show that with this 
+approach it only takes one line:
+
+  http://github.com/spanner/radiant-paperclipped_multisite-extension
+
+== Back to the original
+
+Each site has its own independent 
 sitemap/page-tree and these attributes:
 
   name: Whatever you want to call the site
