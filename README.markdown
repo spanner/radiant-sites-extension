@@ -48,9 +48,9 @@ There is, or will soon be, more about this [in the wiki][2] and one day I'll get
 The [scoped_admin extension][4] uses this method to confine layouts, snippets and (some) 
 users to sites. It only takes four lines of code and two partials.
 
-We've also shrunk the [paperclipped_multisite][5] to a one-liner.
+We've also shrunk the [paperclipped_multi_site extension][5] to a one-liner.
 
-Our [reader extension][6] - which handles site membership - is site scoped if this extension is present. It includes a useful `fake_site_scope` class that drops a warning in the log if site-scoping is not possible but otherwise makes the extension work equally well in a single-site installation.
+Our [reader extension][6] - which handles the mechanics of site membership - is site scoped if this extension is present. It includes a useful `fake_site_scope` class that drops a warning in the log if site-scoping is not possible but otherwise lets the extension work in a single-site installation.
 
 ### Security ###
 
