@@ -30,9 +30,6 @@ class MultiSiteExtension < Radiant::Extension
     Admin::ResourceController.send :include, MultiSite::ResourceControllerExtensions
     Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
 
-    # Helper extensions
-    ApplicationHelper.send :include, MultiSite::HelperExtensions
-
     # AdminUI extensions
     Radiant::AdminUI.send :include, MultiSite::AdminUI unless defined? admin.site # UI is a singleton and already loaded
     admin.site = Radiant::AdminUI.load_default_site_regions
