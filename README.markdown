@@ -39,26 +39,34 @@ If you want the option to share some instances between sites (say you want some 
 
 The scoping takes effect at the ActiveRecord level - it wraps `with_scope` round every call to find (actually, to find_every) and a few other methods. If an object is out of site scope it is as though it didn't exist. This usually means your controller and view code hardly need to change at all: they just see fewer objects. You can fine-tune the scoping by specifying the `site_scope_condition` method in each scoped class.
 
-If a site-scoped class includes any calls to `validates_uniqueness_of`, those too will be scoped to the site. There's a hack there, though: the validations are defined with the model and saved as [procs in an inheritable class attribute](http://casperfabricius.com/site/2008/12/06/removing-rails-validations-with-metaprogramming/) which causes all sorts of misery when you want to change them. Instead we've alias_chained the `validates_uniqueness_of` method to apply scope from the start. This has to happen very early in the initialisation procedure, when we don't really have much configuration information, so the uniqueness validation scope is applied to every model with a `site_id` column. I hope to find a better solution but it does work.
+If a site-scoped class includes any calls to `validates_uniqueness_of`, those too will be scoped to the site. There's a hack there, though: the validations are defined with the model and saved as [procs in an inheritable class attribute][1] which causes all sorts of misery when you want to change them. Instead we've alias_chained the `validates_uniqueness_of` method to apply scope from the start. This has to happen very early in the initialisation procedure, when we don't really have much configuration information, so the uniqueness validation scope is applied to every model with a `site_id` column. I hope to find a better solution but it does work.
 
-There is, or will soon be, more about this [in the wiki](http://wiki.github.com/spanner/radiant-multi-site-extension) and one day I'll get round to posting some [proper documentation](http://spanner.org/radiant/multi_site).
+There is, or will soon be, more about this [in the wiki][2] and one day I'll get round to posting some [proper documentation][3].
 
 ### Examples ###
 
-The [scoped_admin extension](http://github.com/spanner/radiant-scoped-admin-extension) uses this method to confine layouts, snippets and (some) 
+The [scoped_admin extension][4] uses this method to confine layouts, snippets and (some) 
 users to sites. It only takes four lines of code and two partials.
 
-We've also shrunk the [paperclipped_multisite](http://github.com/spanner/radiant-paperclipped_multisite-extension) to a one-liner.
+We've also shrunk the [paperclipped_multisite][5] to a one-liner.
 
-Our [reader extension](http://github.com/spanner/radiant-reader-extension) - which handles site membership - is site scoped if this extension is present. It includes a useful `fake_site_scope` class that drops a warning in the log if site-scoping is not possible but otherwise makes the extension work equally well in a single-site installation.
+Our [reader extension][6] - which handles site membership - is site scoped if this extension is present. It includes a useful `fake_site_scope` class that drops a warning in the log if site-scoping is not possible but otherwise makes the extension work equally well in a single-site installation.
 
 ### Security ###
 
-Is one of the main goals. A couple of our clients are very security-conscious and we needed something in which there was no risk at all of the wrong person seeing a page. This will make more sense when I publish the [groups](http://github.com/spanner/radiant-groups-extension) extension, which is next. If you see a loophole we'd be __very__ glad to know of it.
+Is one of the main goals. A couple of our clients are very security-conscious and we needed something in which there was no risk at all of the wrong person seeing a page. This will make more sense when I publish the [groups][7]) extension, which is next. If you see a loophole we'd be __very__ glad to know of it.
 
 ### Questions and comments ###
 
 Would be very welcome. Contact Will on will at spanner.org.
+
+[1]: <http://casperfabricius.com/site/2008/12/06/removing-rails-validations-with-metaprogramming/>
+[2]: <http://wiki.github.com/spanner/radiant-multi-site-extension>
+[3]: <http://spanner.org/radiant/multi_site> "Not there yet!"
+[4]: <http://github.com/spanner/radiant-scoped-admin-extension>
+[5]: <http://github.com/spanner/radiant-paperclipped_multisite-extension>
+[6]: <http://github.com/spanner/radiant-reader-extension>
+[7]: <http://github.com/spanner/radiant-groups-extension>
 
 - - -
 
