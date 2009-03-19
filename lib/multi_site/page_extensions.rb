@@ -13,15 +13,18 @@ module MultiSite::PageExtensions
   
   module ClassMethods
     def find_by_url_with_sites(url, live=true)
-      root = find_by_parent_id(nil)
-      if self.current_site.is_a?(Site)
-        root = self.current_site.homepage
-      end
+      root = homepage
       raise Page::MissingRootPageError unless root
       root.find_by_url(url, live)
     end
+    def homepage
+      if self.current_site.is_a?(Site)
+        homepage = self.current_site.homepage
+      end
+      homepage ||= find_by_parent_id(nil)
+    end
   end
-  
+    
   def url_with_sites
     if parent
       parent.child_url(self)

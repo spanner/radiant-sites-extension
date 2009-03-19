@@ -54,7 +54,7 @@ Our [reader][] extension - which handles the mechanics of site membership - is s
 
 ### Security ###
 
-Is one of the main goals. A couple of our clients are very security-conscious and we needed something in which there was no risk at all of the wrong person seeing a page. This will make more sense when I publish the [reader-groups][] extension), which is next. If you see a loophole we'd be __very__ glad to know of it.
+Is one of the main goals. A couple of our clients are very security-conscious and we needed something in which there was no risk at all of the wrong person seeing a page. This will make more sense when I publish the [reader-groups][] extension), which is next. If you see a loophole we'll be __very__ glad to know of it.
 
 ### Questions and comments ###
 
