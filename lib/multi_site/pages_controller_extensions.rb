@@ -13,6 +13,8 @@ module MultiSite::PagesControllerExtensions
     }
   end
 
+  # chained: PagesControllerExtensions::find_current_site_with_root -> ResourceControllerExtensions::find_current_site_with_options -> ControllerExtensions::find_current_site
+
   def find_current_site_with_root
     site_from_root || find_current_site_without_root
   end

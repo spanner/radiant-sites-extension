@@ -39,13 +39,6 @@ describe Page do
       assert_equal pages(:home), Page.find_by_url("/")
       assert_equal pages(:news), Page.find_by_url("/news")
     end
-    
-    it "should not find a page in a site with no homepage" do
-      lambda do
-        Page.current_site = sites(:yoursite)
-        Page.find_by_url("/")
-      end.should raise_error(Page::MissingRootPageError)
-    end
   end
   
   describe "#destroy" do

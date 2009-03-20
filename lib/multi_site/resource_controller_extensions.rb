@@ -5,6 +5,13 @@ module MultiSite::ResourceControllerExtensions
     }
   end
 
+  def current_site=(site=nil)
+    if site && site.is_a?(Site)
+      @current_site = site
+      cookies[:site_id] = { :value => site.id.to_s }
+    end
+  end
+
   def find_current_site_with_options
     site_from_param || site_from_cookie || find_current_site_without_options
   end

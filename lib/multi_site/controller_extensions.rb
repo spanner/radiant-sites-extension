@@ -23,7 +23,6 @@ module MultiSite::ControllerExtensions    # for inclusion into ApplicationContro
     def current_site=(site=nil)
       if site && site.is_a?(Site)
         @current_site = site
-        cookies[:site_id] = { :value => site.id.to_s }
       end
     end
 
