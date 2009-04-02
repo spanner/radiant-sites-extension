@@ -11,7 +11,7 @@ module MultiSite::ScopedValidation
         # and if table doesn't exist it's presumably because we're migrating. calling column_names
         # in that situation is not helpful
 
-        if table_exists? && column_names.include?('site_id')         
+        if table_exists? && column_names.include?('site_id') && Site.several?
           configuration = attr.extract_options!
           configuration[:scope] ||= :site_id
           attr.push(configuration)

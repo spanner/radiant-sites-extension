@@ -49,7 +49,7 @@ module MultiSite
 
     module ScopedClassMethods
       def find_every_with_site(options)
-        # logger.warn ">>> #{self}.find_every_with_site(#{options.inspect})"
+        return find_every_without_site(options) unless sites?
         with_scope(:find => {:conditions => site_scope_condition}) do
           find_every_without_site(options)
         end
@@ -57,23 +57,28 @@ module MultiSite
 
       %w{count average minimum maximum sum}.each do |getter|
         define_method("#{getter}_with_site") do |*args|
+          return send("#{getter}_without_site".intern, *args) unless sites?
           with_scope(:find => {:conditions => site_scope_condition}) do
             send "#{getter}_without_site".intern, *args
           end
         end
       end
+      
+      def sites?
+        Site.several?
+      end
 
       def current_site!
-        raise(ActiveRecord::SiteNotFound, "no site found", caller) unless current_site && current_site.is_a?(Site)
+        raise(ActiveRecord::SiteNotFound, "no site found", caller) if sites? && !current_site
         current_site
       end
 
       def current_site
-        Page.current_site
+        Page.current_site ||= Site.catchall
       end
             
       def site_scope_condition
-        self.shareable ? "#{table_name}.site_id = #{current_site!.id} OR #{table_name}.site_id IS NULL" : "#{table_name}.site_id = #{current_site!.id}"
+        self.shareable ? "#{table_name}.site_id = #{current_site.id} OR #{table_name}.site_id IS NULL" : "#{table_name}.site_id = #{current_site.id}"
       end
     
       def plural_symbol_for_class

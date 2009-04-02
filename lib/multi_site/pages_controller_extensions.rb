@@ -27,7 +27,7 @@ module MultiSite::PagesControllerExtensions
 
   def index_with_site
     @site ||= current_site
-    @homepage ||= @site.homepage || Page.find_by_parent_id(nil)
+    @homepage ||= @site.homepage || Page.homepage
   end
 
   def remove_with_back

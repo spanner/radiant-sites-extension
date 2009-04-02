@@ -57,7 +57,7 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
 
   describe "when validated" do
     before do
-      @in_my_site = Snippet.new(:name => 'test snippet in mysite')
+      @in_my_site = Snippet.new(:name => 'test_snippet_in_mysite')
       @in_my_site.valid?
     end
     
@@ -91,8 +91,9 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
       Page.current_site = nil
     end
 
-    it "should raise a SiteNotFound error" do
-      lambda {@in_my_site = Snippet.create!(:name => 'test snippet in mysite')}.should raise_error(ActiveRecord::SiteNotFound)
+    it "should get the default site" do
+      @s = Snippet.create!(:name => 'test_snippet_in_default_site')
+      @s.site.name.should == 'default_site'
     end
   end
   
@@ -135,12 +136,16 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
         Page.current_site = nil
       end
 
-      it "should raise a SiteNotFound error for a snippet that exists" do
-        lambda {@snippet = Snippet.find(@yoursnippetid)}.should raise_error(ActiveRecord::SiteNotFound)
+      it "should find or create a default site" do
+        Snippet.current_site.name.should == 'default_site'
       end
 
-      it "should raise a SiteNotFound error for a nonexistent snippet" do
-        lambda {@snippet = Snippet.find('fish')}.should raise_error(ActiveRecord::SiteNotFound)
+      it "should raise a RecordNotFound error for a snippet that exists in another site" do
+        lambda {@snippet = Snippet.find(@yoursnippetid)}.should raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "should still raise a RecordNotFound error for a nonexistent snippet" do
+        lambda {@snippet = Snippet.find('fish')}.should raise_error(ActiveRecord::RecordNotFound)
       end
     end  
   end

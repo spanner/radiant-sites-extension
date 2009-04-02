@@ -17,6 +17,7 @@ module MultiSite::PageExtensions
       raise Page::MissingRootPageError unless root
       root.find_by_url(url, live)
     end
+    
     def homepage
       if self.current_site.is_a?(Site)
         homepage = self.current_site.homepage

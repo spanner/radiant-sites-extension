@@ -23,7 +23,7 @@ or maybe soon just:
 	$ rake ray:extension:install name="multi-site" hub="spanner"
 
 ### Compatibility ###
-This ought to be a drop-in replacement for the original multi_site. It differs from the original in that it will throw an error if no site can be found, but one of the migrations will make sure that a default site is available. In the normal run of events that site will catch all requests, and all manner of thing will be well.
+This ought to be a drop-in replacement for the original multi_site. It differs from the original in that it will create a default site if none exists, but this should happen in the background. 
 
 This version of multi_site does cause failures in radiant's main tests, usually when a site is required but the tests don't supply it. I will probably add a 'lax mode' at some point that doesn't mind if no site is defined.
 
@@ -39,34 +39,26 @@ If you want the option to share some instances between sites (say you want some 
 
 The scoping takes effect at the ActiveRecord level - it wraps `with_scope` round every call to find (actually, to find_every) and a few other methods. If an object is out of site scope it is as though it didn't exist. This usually means your controller and view code hardly need to change at all: they just see fewer objects. You can fine-tune the scoping by specifying the `site_scope_condition` method in each scoped class.
 
-If a site-scoped class includes any calls to `validates_uniqueness_of`, those too will be scoped to the site. There's a hack there, though: the validations are defined with the model and saved as [procs][] which causes all sorts of misery when you want to change them. Instead we've alias_chained the `validates_uniqueness_of` method to apply scope from the start. This has to happen very early in the initialisation procedure, when we don't really have much configuration information, so the uniqueness validation scope is applied to every model with a `site_id` column. I hope to find a better solution but it does work.
+If a site-scoped class includes any calls to `validates_uniqueness_of`, those too will be scoped to the site. There's a hack there, though: the validations are defined with the model and saved as [procs](http://casperfabricius.com/site/2008/12/06/removing-rails-validations-with-metaprogramming/) which causes all sorts of misery when you want to change them. Instead we've alias_chained the `validates_uniqueness_of` method to apply scope from the start. This has to happen very early in the initialisation procedure, when we don't really have much configuration information, so the uniqueness validation scope is applied to every model with a `site_id` column. I hope to find a better solution but it does work.
 
-There is, or will soon be, more about this [in the wiki][] and one day I'll get round to posting some [proper documentation][].
+There is, or will soon be, more about this [in the wiki](http://wiki.github.com/spanner/radiant-multi-site-extension) and one day I'll get round to posting some [proper documentation](http://spanner.org/radiant/multi_site).
 
 ### Examples ###
 
-The [scoped_admin][] extension uses this method to confine layouts, snippets and (some) 
+The [scoped_admin](http://github.com/spanner/radiant-scoped-admin-extension) extension uses this method to confine layouts, snippets and (some) 
 users to sites. It only takes four lines of code and two partials.
 
-We've also shrunk the [paperclipped_multi_site][] extension to a one-liner.
+We've also shrunk the [paperclipped_multi_site](http://github.com/spanner/radiant-paperclipped_multisite-extension) extension to a one-liner.
 
-Our [reader][] extension - which handles the mechanics of site membership - is site scoped if this extension is present. It includes a useful `fake_site_scope` class that drops a warning in the log if site-scoping is not possible but otherwise lets the extension work in a single-site installation.
+Our [reader](http://github.com/spanner/radiant-reader-extension) extension - which handles the mechanics of site membership - is site scoped if this extension is present. It includes a useful `fake_site_scope` class that drops a warning in the log if site-scoping is not possible but otherwise lets the extension work in a single-site installation.
 
 ### Security ###
 
-Is one of the main goals. A couple of our clients are very security-conscious and we needed something in which there was no risk at all of the wrong person seeing a page. This will make more sense when I publish the [reader-groups][] extension), which is next. If you see a loophole we'll be __very__ glad to know of it.
+Is one of the main goals. A couple of our clients are very security-conscious and we needed something in which there was no risk at all of the wrong person seeing a page. This will make more sense when I publish the [reader-groups](http://github.com/spanner/radiant-reader-groups-extension) extension), which is next. If you see a loophole we'll be __very__ glad to know of it.
 
 ### Questions and comments ###
 
-Would be very welcome. Contact Will on will at spanner.org.
-
-[procs]: <http://casperfabricius.com/site/2008/12/06/removing-rails-validations-with-metaprogramming/>
-[in the wiki]: <http://wiki.github.com/spanner/radiant-multi-site-extension>
-[proper documentation]: <http://spanner.org/radiant/multi_site> "Not there yet!"
-[scoped_admin]: <http://github.com/spanner/radiant-scoped-admin-extension>
-[paperclipped_multi_site]: <http://github.com/spanner/radiant-paperclipped_multisite-extension>
-[reader]: <http://github.com/spanner/radiant-reader-extension>
-[reader-groups]: <http://github.com/spanner/radiant-reader-groups-extension>
+Would be very welcome. Contact Will on will at spanner.org or drop [something into lighthouse](http://spanner.lighthouseapp.com/projects/26912-radiant-extensions)
 
 - - -
 

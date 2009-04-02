@@ -12,6 +12,19 @@ class Site < ActiveRecord::Base
       end
       matching || default.first
     end
+    
+    def catchall
+      find_by_domain('') || create({
+        :domain => '', 
+        :name => 'default_site', 
+        :base_domain => 'my.domain.com',
+        :homepage => Page.find_by_parent_id(nil)
+      })
+    end
+    
+    def several?
+      count > 1
+    end
   end
   
   belongs_to :homepage, :class_name => "Page", :foreign_key => "homepage_id"
@@ -25,7 +38,7 @@ class Site < ActiveRecord::Base
     uri = URI.join("http://#{self.base_domain}", path)
     uri.to_s
   end
-  
+    
   def dev_url(path = "/")
     uri = URI.join("http://#{Radiant::Config['dev.host']|| 'dev'}.#{self.base_domain}", path)
     uri.to_s
