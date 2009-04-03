@@ -28,6 +28,7 @@ module MultiSite::PagesControllerExtensions
   def index_with_site
     @site ||= current_site
     @homepage ||= @site.homepage || Page.homepage
+    response_for :plural
   end
 
   def remove_with_back
