@@ -10,9 +10,10 @@ module MultiSite::ControllerExtensions
     end
     
     # the first time current_site is called, it will call find_current_site. Results are stored in the class variable @current_site and subsequently have to be updated by called current_site= rather than changing context.
+    # we call self.current_site= rather than setting @current_site so that the setter method can be extended down the line.
 
     def current_site
-      @current_site ||= find_current_site
+      @current_site || self.current_site = find_current_site
     end
     
     # current_site= will only act if a site is supplied: called current_site = nil has no effect.
