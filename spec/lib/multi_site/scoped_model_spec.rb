@@ -6,22 +6,23 @@ describe 'extended AR::Base' do
   end
 end
 
-unless Snippet.column_names.include?('site_id')
-  Snippet.connection.execute("ALTER TABLE snippets ADD site_id INT")    # dirty dirty dirty!
-  Snippet.reset_column_information
-end
-
-describe "Site-scoped, unshareable Snippet", :type => :model do
+describe "scoped, unshareable model", :type => :model do
   dataset :sites
-  
-  Snippet.send :is_site_scoped
+  dataset :site_users
   
   before do
-    Page.current_site = sites(:mysite)
+    Snippet.stub!(:site_id).and_return(site_id(:mysite))
+    Page.stub!(:current_site).and_return(sites(:mysite))
+    UserActionObserver.stub!(:current_user).and_return(users(:sharedadmin))
+    Snippet.send :is_site_scoped
   end
   
   it "should report itself site_scoped" do
     Snippet.is_site_scoped?.should be_true
+  end
+
+  it "should not report itself shareable" do
+    Snippet.is_shareable?.should_not be_true
   end
 
   it "should have a site association" do
@@ -36,7 +37,7 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
     Snippet.respond_to?(:current_site=).should be_false
   end
 
-  it "should return the corrent current site" do
+  it "should return the correct current site" do
     Snippet.send(:current_site).should == sites(:mysite)
   end
   
@@ -45,7 +46,7 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
       @in_my_site = Snippet.new(:name => 'test snippet in mysite')
     end
   
-    it "should not necessarily have a site" do
+    it "should not yet have a site" do
       @in_my_site.site.should be_nil
     end
 
@@ -68,8 +69,7 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
     
     describe "with site-scope" do
       before do
-        Page.current_site = sites(:mysite)
-        Snippet.create!(:name => 'testy')
+        @existing = Snippet.create!(:name => 'testy', :site_id => site_id(:mysite))
       end
       it "should be invalid if its name is already in use on this site" do
         snippet = Snippet.new(:name => 'testy')
@@ -79,36 +79,20 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
       end
 
       it "should be valid even though its name is already in use on another site" do
-        Page.current_site = sites(:yoursite)
-        snippet = Snippet.new(:name => 'testy')
+        snippet = Snippet.new(:name => 'testy', :site_id => site_id(:yoursite) )
         snippet.valid?.should be_true
       end
     end
   end 
   
-  describe "when no site is specified" do
-    before do
-      Page.current_site = nil
-    end
-
-    it "should get the default site" do
-      @s = Snippet.create!(:name => 'test_snippet_in_default_site')
-      @s.site.name.should == 'default_site'
-    end
-  end
-  
   describe "on retrieval" do
     before do
-      20.times { |i| Snippet.create!(:name => "snippet#{i}") }
-      @mysnippetid = Snippet.find_by_name('snippet10').id
-      Page.current_site = sites(:yoursite)
-      20.times { |i| Snippet.create!(:name => "snippet#{i+20}") }
-      @yoursnippetid = Snippet.find_by_name('snippet30').id
-      Page.current_site = sites(:mysite)
+      20.times { |i| @mine = Snippet.create!(:name => "snippet#{i}", :site_id => site_id(:mysite)) }
+      20.times { |i| @yours = Snippet.create!(:name => "snippet#{i+20}", :site_id => site_id(:yoursite)) }
     end
     
     it "should find a snippet from the current site" do
-      lambda {@snippet = Snippet.find(@mysnippetid)}.should_not raise_error(ActiveRecord::RecordNotFound)
+      lambda {@snippet = Snippet.find(@mine.id)}.should_not raise_error(ActiveRecord::RecordNotFound)
       @snippet.should_not be_nil
       @snippet.site.should == sites(:mysite)
     end
@@ -120,7 +104,7 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
     end
 
     it "should not find a snippet from another site" do
-      lambda {@snippet = Snippet.find(@yoursnippetid)}.should raise_error(ActiveRecord::RecordNotFound)
+      lambda {@snippet = Snippet.find(@yours.id)}.should raise_error(ActiveRecord::RecordNotFound)
     end
 
     it "should not find_by_name a snippet from another site" do
@@ -131,38 +115,18 @@ describe "Site-scoped, unshareable Snippet", :type => :model do
       Snippet.count(:all).should == 20
     end
 
-    describe "when no site is specified" do
-      before do
-        Page.current_site = nil
-      end
-
-      it "should find or create a default site" do
-        Snippet.current_site.name.should == 'default_site'
-      end
-
-      it "should raise a RecordNotFound error for a snippet that exists in another site" do
-        lambda {@snippet = Snippet.find(@yoursnippetid)}.should raise_error(ActiveRecord::RecordNotFound)
-      end
-
-      it "should still raise a RecordNotFound error for a nonexistent snippet" do
-        lambda {@snippet = Snippet.find('fish')}.should raise_error(ActiveRecord::RecordNotFound)
-      end
-    end  
   end
 end
 
 
-unless User.column_names.include?('site_id')
-  User.connection.execute("ALTER TABLE users ADD site_id INT")    # oh, eric. he's doing it again.
-  User.reset_column_information
-end
 
-describe "Site-scoped, shareable User", :type => :model do
-  User.send :is_site_scoped, :shareable => true
+describe "scoped, shareable model", :type => :model do
   dataset :sites
   dataset :site_users
 
   before do
+    User.stub!(:site_id).and_return(site_id(:mysite))
+    User.send :is_site_scoped, :shareable => true
     Page.current_site = sites(:mysite)
   end
 
@@ -207,7 +171,6 @@ describe "Site-scoped, shareable User", :type => :model do
       # core radiant users_dataset creates 5 users with no site. Site_users_dataset creates 2 with this site and 2 with none
       User.count(:all).should == 9  
     end
-
   end
   
   

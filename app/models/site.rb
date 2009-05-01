@@ -6,18 +6,25 @@ class Site < ActiveRecord::Base
 
   class << self
     def find_for_host(hostname = '')
-      default, normal = find(:all).partition {|s| s.domain.blank? }
-      matching = normal.find do |site|
-        hostname == site.base_domain || hostname =~ Regexp.compile(site.domain)
-      end
-      matching || default.first
+      # default, normal = find(:all).partition {|s| s.domain.blank? }
+      # matching = normal.find do |site|
+      #   hostname == site.base_domain || hostname =~ Regexp.compile(site.domain)
+      # end
+      # matching || default.first || catchall
+      # 
+      
+      # the only real change here is that if we find no site, we create one with no domain
+      # in most cases we save a query, though
+      
+      matches = find(:all, :conditions => "sites.domain IS NOT NULL AND sites.domain != ''").select{|site| hostname == site.base_domain || hostname =~ Regexp.compile(site.domain) }
+      matches.any? ? matches.first : catchall
     end
     
     def catchall
-      find_by_domain('') || create({
+      find_by_domain('') || find_by_domain(nil) || create({
         :domain => '', 
         :name => 'default_site', 
-        :base_domain => 'my.domain.com',
+        :base_domain => 'localhost',
         :homepage => Page.find_by_parent_id(nil)
       })
     end

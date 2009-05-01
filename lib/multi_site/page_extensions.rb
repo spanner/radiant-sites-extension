@@ -12,6 +12,10 @@ module MultiSite::PageExtensions
   end
   
   module ClassMethods
+    def current_site
+      @current_site ||= Site.catchall
+    end
+    
     def find_by_url_with_sites(url, live=true)
       root = homepage
       raise Page::MissingRootPageError unless root

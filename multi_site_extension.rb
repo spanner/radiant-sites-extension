@@ -29,6 +29,7 @@ class MultiSiteExtension < Radiant::Extension
     SiteController.send :include, MultiSite::SiteControllerExtensions
     Admin::ResourceController.send :include, MultiSite::ResourceControllerExtensions
     Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
+    UserActionObserver.send :include, MultiSite::ActionObserverExtensions
 
     # AdminUI extensions
     Radiant::AdminUI.send :include, MultiSite::AdminUI unless defined? admin.site # UI is a singleton and already loaded

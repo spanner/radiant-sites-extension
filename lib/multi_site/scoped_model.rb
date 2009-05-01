@@ -32,7 +32,8 @@ module MultiSite
         belongs_to :site
         Site.send(:has_many, plural_symbol_for_class)
 
-        before_validation :set_site unless options[:shareable]
+        # site is set in a before_validation call added to UserActionObserver
+        
         validates_presence_of :site unless options[:shareable]
 
         class << self
@@ -74,7 +75,7 @@ module MultiSite
       end
 
       def current_site
-        Page.current_site ||= Site.catchall
+        Page.current_site
       end
             
       def site_scope_condition
@@ -87,6 +88,10 @@ module MultiSite
       
       def is_site_scoped?
         true
+      end
+
+      def is_shareable?
+        true if self.shareable
       end
 
     end
