@@ -1,3 +1,6 @@
+# The site class includes - in find_for_host - some key retrieval and creation logic that is called from ApplicationController to set the current site context. 
+# Otherwise it's just another radiant data model.
+
 class Site < ActiveRecord::Base
   acts_as_list
   belongs_to :created_by, :class_name => 'User'
@@ -5,20 +8,18 @@ class Site < ActiveRecord::Base
   order_by "position ASC"
 
   class << self
+    
+    # Given a hostname, Site.find_for_host will return the first site for which the hostname either equals the base domain or matches the domain pattern.
+    # If no site is matched, it will call catchall
+    
     def find_for_host(hostname = '')
-      # default, normal = find(:all).partition {|s| s.domain.blank? }
-      # matching = normal.find do |site|
-      #   hostname == site.base_domain || hostname =~ Regexp.compile(site.domain)
-      # end
-      # matching || default.first || catchall
-      # 
-      
       # the only real change here is that if we find no site, we create one with no domain
       # in most cases we save a query, though
-      
       matches = find(:all, :conditions => "sites.domain IS NOT NULL AND sites.domain != ''").select{|site| hostname == site.base_domain || hostname =~ Regexp.compile(site.domain) }
       matches.any? ? matches.first : catchall
     end
+    
+    # Site.catchall returns the the first site it can find with an empty domain pattern. If none is found, we are probably brand new, so a workable default site is created.
     
     def catchall
       find_by_domain('') || find_by_domain(nil) || create({
@@ -28,6 +29,8 @@ class Site < ActiveRecord::Base
         :homepage => Page.find_by_parent_id(nil)
       })
     end
+    
+    # Returns true if more than one site is present. This is normally only used to make interface decisions, eg whether to show the site-chooser dropdown.
     
     def several?
       count > 1
@@ -41,27 +44,37 @@ class Site < ActiveRecord::Base
   after_create :create_homepage
   after_save :reload_routes
   
+  # Returns the fully specified web address for the supplied path, or the root of this site if no path is given.
+  
   def url(path = "/")
     uri = URI.join("http://#{self.base_domain}", path)
     uri.to_s
   end
+
+  # Returns the fully specified web address for the development version of this site and the supplied path, or the root of this site if no path is given.
     
   def dev_url(path = "/")
     uri = URI.join("http://#{Radiant::Config['dev.host']|| 'dev'}.#{self.base_domain}", path)
     uri.to_s
   end
   
-  def create_homepage
-    if self.homepage_id.blank?
-        self.homepage = self.build_homepage(:title => "#{self.name} Homepage", 
-                           :slug => "#{self.name.to_slug}", :breadcrumb => "Home", 
-                           :status => Status[:draft])
-        self.homepage.parts << PagePart.new(:name => "body", :content => "")
-        save
-    end
-  end
+  protected
   
-  def reload_routes
-    ActionController::Routing::Routes.reload
-  end
+    # Creates an empty parentless page with draft status and an association with this site. Called after_create.
+  
+    def create_homepage
+      if self.homepage_id.blank?
+          self.homepage = self.build_homepage(:title => "#{self.name} Homepage", 
+                             :slug => "#{self.name.to_slug}", :breadcrumb => "Home", 
+                             :status => Status[:draft])
+          self.homepage.parts << PagePart.new(:name => "body", :content => "")
+          save
+      end
+    end
+  
+    # Site changes will mean route changes so this method is called after_save.
+  
+    def reload_routes
+      ActionController::Routing::Routes.reload
+    end
 end

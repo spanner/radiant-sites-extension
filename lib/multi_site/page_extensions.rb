@@ -1,3 +1,5 @@
+# Unlike other scoped classes, there is no site association in the Page class. Instead, Site has a homepage association and Page has some retrieval methods that turn a page request into site information.
+
 module MultiSite::PageExtensions
   def self.included(base)
     base.class_eval {
