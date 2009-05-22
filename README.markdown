@@ -8,6 +8,8 @@ Multi Site allows you to host multiple websites on a single Radiant installation
 
 This is an extended version by spanner that also gives you a flexible but very robust way to scope other model classes to the current site. It's just a framework - nothing is scoped by default - but very easy to apply. See under scoped resources below.
 
+The only other change here is a refactoring of the site-detection procedure that means the cache can be hit without database calls, and which makes it easy to alias_chain in other ways of setting the current site (eg. in ResourceController we store it in the session so that the admin interface consistently displays the right site).
+
 ### Status ###
 
 Hm. Late beta? This is pretty solid now and quite thoroughly tested.
