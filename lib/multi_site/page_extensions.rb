@@ -4,7 +4,7 @@ module MultiSite::PageExtensions
   def self.included(base)
     base.class_eval {
       alias_method_chain :url, :sites
-      # mattr_accessor :current_site
+      mattr_accessor :current_site
       mattr_accessor :current_domain
       has_one :site, :foreign_key => "homepage_id", :dependent => :nullify
     }
