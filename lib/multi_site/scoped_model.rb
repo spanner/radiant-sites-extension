@@ -79,7 +79,7 @@ module MultiSite
       end
             
       def site_scope_condition
-        self.shareable ? "#{table_name}.site_id = #{current_site.id} OR #{table_name}.site_id IS NULL" : "#{table_name}.site_id = #{current_site.id}"
+        self.shareable ? "#{self.table_name}.site_id = #{self.current_site.id} OR #{self.table_name}.site_id IS NULL" : "#{self.table_name}.site_id = #{self.current_site.id}"
       end
     
       def plural_symbol_for_class

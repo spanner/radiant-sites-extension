@@ -1,15 +1,26 @@
 module MultiSite::ResourceControllerExtensions
+
   def self.included(base)
     base.class_eval {
+      before_filter :set_current_site
       alias_method_chain :find_current_site, :options
+      alias_method_chain :current_site=, :session
     }
   end
 
-  def current_site=(site=nil)
-    if site && site.is_a?(Site)
-      @current_site = site
-      set_session_site
-    end
+  def current_site_with_session=(site=nil)
+    current_site_without_session = site
+    set_session_site
+  end
+
+  # set_current_site is moved into here because the alternative ways of setting the site only matter in admin
+  # for site_controller, it is always right to use the site corresponding to request.host
+  # and we can do that just by setting Page.current_domain
+  # the main advantage is to simplify the path to cache
+
+  def set_current_site
+    Page.current_site = current_site
+    true
   end
 
   def find_current_site_with_options

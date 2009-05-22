@@ -6,34 +6,35 @@ module MultiSite::ControllerExtensions
 
     base.class_eval do
       helper_method :current_site
-      prepend_before_filter :set_current_site   # sometimes we need current_site in order to get current_user
+      prepend_before_filter :set_current_domain
     end
     
     # the first time current_site is called, it will call find_current_site. Results are stored in the class variable @current_site and subsequently have to be updated by called current_site= rather than changing context.
     # we call self.current_site= rather than setting @current_site so that the setter method can be extended down the line.
+    # (and we don't just use Page.current_site because in admin we often want to let something else take priority and change Page.current_site to match)
 
     def current_site
       @current_site || self.current_site = find_current_site
     end
     
-    # current_site= will only act if a site is supplied: called current_site = nil has no effect.
-    
+    # setting controller.current_site always sets Page.current_site and so can override the default use of request.host
+    # the purpose here is to return cache hits without touching the database but to let uncached pages have access to everything:
+    # we defer site-finding as long as possible then allow quite an elaborate machinery of defaults and parameters
+        
     def current_site=(site=nil)
       if site && site.is_a?(Site)
         @current_site = site
+        Page.current_site = site
       end
     end
 
     protected
-    
-      # set_current_site is the starting point of the site-context machinery. It is invoked from a before_filter and sets Page.current_site in a way that calls (once) find_current_site
 
-      def set_current_site
-        Page.current_site = current_site
-        true
+      def set_current_domain
+        Page.current_domain = request.host
       end
-
-      # find_current_site is separated so it can be alias_chained
+    
+      # find_current_site is kept here so it can be alias_chained
       # in eg resource controller (adds site_id= param and checks admin session) and pages controller (adds root= param)
 
       def find_current_site

@@ -10,7 +10,7 @@ This is an extended version by spanner that also gives you a flexible but very r
 
 ### Status ###
 
-Hm. Late beta? This is pretty solid now and quite thoroughly tested but a week or two in the wild wouldn't hurt.
+Hm. Late beta? This is pretty solid now and quite thoroughly tested.
 
 ### Installation ###
 
