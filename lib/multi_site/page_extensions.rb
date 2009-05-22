@@ -20,6 +20,10 @@ module MultiSite::PageExtensions
       @current_site ||= Site.find_for_host(current_domain)
     end
     
+    def current_site=(site)
+      @current_site = site
+    end
+    
     def find_by_url_with_sites(url, live=true)
       root = homepage
       raise Page::MissingRootPageError unless root
