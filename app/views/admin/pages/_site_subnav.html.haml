@@ -1,9 +1,0 @@
-- content_for :page_scripts do
-  :plain
-    SiteMap.prototype.toggleBranch = function(row, img) {
-      this.expandedRows = [];
-      this.saveExpandedCookie();
-      var id = row.id.split("-").last();
-      window.location = "#{admin_pages_path}?root=" + id;
-    };
-= render :partial => 'admin/shared/site_jumper'

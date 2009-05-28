@@ -37,7 +37,7 @@ class MultiSiteExtension < Radiant::Extension
 
     Radiant::Config["dev.host"] = 'preview' if Radiant::Config.table_exists?
 
-    admin.pages.index.add :top, "site_subnav"
+    admin.pages.index.add :top, "admin/shared/site_jumper"
   end
 
   def deactivate
