@@ -70,8 +70,8 @@ module MultiSite
       end
 
       def current_site!
-        raise(ActiveRecord::SiteNotFound, "no site found", caller) if sites? && !current_site
-        current_site
+        raise(ActiveRecord::SiteNotFound, "no site found", caller) if sites? && !self.current_site
+        self.current_site
       end
 
       def current_site
@@ -79,7 +79,7 @@ module MultiSite
       end
             
       def site_scope_condition
-        self.shareable ? "#{self.table_name}.site_id = #{self.current_site.id} OR #{self.table_name}.site_id IS NULL" : "#{self.table_name}.site_id = #{self.current_site.id}"
+        self.shareable ? "#{self.table_name}.site_id = #{self.current_site.id} OR #{self.table_name}.site_id IS NULL" : "#{self.table_name}.site_id = #{self.current_site!.id}"
       end
     
       def plural_symbol_for_class

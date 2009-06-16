@@ -17,11 +17,11 @@ module MultiSite::PageExtensions
   
   module ClassMethods
     def current_site
-      @current_site ||= Site.find_for_host(current_domain)
+      self.current_site ||= Site.find_for_host(self.current_domain)
     end
     
     def current_site=(site)
-      @current_site = site
+      self.current_site = site
     end
     
     def find_by_url_with_sites(url, live=true)

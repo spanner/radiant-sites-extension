@@ -18,7 +18,7 @@ module MultiSite::ControllerExtensions
     end
     
     # setting controller.current_site always sets Page.current_site and so can override the default use of request.host
-    # the purpose here is to return cache hits without touching the database but to let uncached pages have access to everything:
+    # the purpose here is to return cache hits without touching the database but still to let uncached pages have access to everything:
     # we defer site-finding as long as possible then allow quite an elaborate machinery of defaults and parameters
         
     def current_site=(site=nil)
@@ -29,6 +29,8 @@ module MultiSite::ControllerExtensions
     end
 
     protected
+
+      # we store the domain rather than the site so as to defer database calls until after cache is examined
 
       def set_current_domain
         Page.current_domain = request.host
@@ -41,7 +43,8 @@ module MultiSite::ControllerExtensions
         site_from_host
       end
 
-      # site_from_host just calls Site.find_for_host.
+      # site_from_host is just your basic where-am-I call.
+      # admin controllers do more work to find out what site you want to work on.
 
       def site_from_host
         Site.find_for_host(request.host) # defaults to first site with empty domain if none match request domain
