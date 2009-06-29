@@ -6,9 +6,7 @@ Multi Site allows you to host multiple websites on a single Radiant installation
 
 ## (Forked) ##
 
-This is an extended version by spanner that also gives you a flexible but very robust way to scope other model classes to the current site. It's just a framework - nothing is scoped by default - but very easy to apply. See under scoped resources below.
-
-The only other change here is a refactoring of the site-detection procedure that means the cache can be hit without database calls, and which makes it easy to alias_chain in other ways of setting the current site (eg. in ResourceController we store it in the session so that the admin interface consistently displays the right site).
+This fork has two main benefits: it eliminates all database access from the trip to cache, which I've found to reduce the load on a busy server quite significantly, and it adds a flexible but robust way to scope model classes to the current site. It's just a framework - nothing is scoped by default - but very easy to apply. See under scoped resources below.
 
 ### Status ###
 
@@ -23,9 +21,12 @@ Hm. Late beta? This is pretty solid now and quite thoroughly tested.
 or maybe soon just:
 
 	$ rake ray:extension:install name="multi-site" hub="spanner"
+	
+who kno?
 
 ### Compatibility ###
-This ought to be a drop-in replacement for the original multi_site. It differs from the original in that it will create a default site if none exists, but this should happen in the background. 
+
+This ought to be a drop-in replacement for the core multi_site. It differs from the original in that it will create a default site if none exists, but this should happen invisibly.
 
 This version of multi_site does cause failures in radiant's main tests, usually when a site is required but the tests don't supply it. I will probably add a 'lax mode' at some point that doesn't mind if no site is defined.
 
@@ -35,7 +36,7 @@ If you want to site-scope a model class (let's say you want your photo galleries
 
 	is_site_scoped
 
-If you want the option to share some instances between sites (say you want some of your users to be confined to one site but some to see all of them):
+If you want the option to share some instances between sites (say you want some of your users to be confined to one site but a few admin users to see all of them):
 
 	is_site_scoped :shareable => true
 
@@ -60,7 +61,7 @@ Is one of the main goals. A couple of our clients are very security-conscious an
 
 ### Questions and comments ###
 
-Would be very welcome. Contact Will on will at spanner.org or drop [something into lighthouse](http://spanner.lighthouseapp.com/projects/26912-radiant-extensions)
+Would be very welcome. Contact Will on will at spanner.org or drop [something into lighthouse](http://spanner.lighthouseapp.com/projects/26912-radiant-extensions). Github messages also fine.
 
 - - -
 
