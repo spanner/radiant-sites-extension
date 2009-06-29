@@ -5,7 +5,8 @@ class Site < ActiveRecord::Base
   acts_as_list
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
-  default_scope :order => 'position ASC'
+  order_by "position ASC"
+  # default_scope :order => 'position ASC'
 
   class << self
     
@@ -70,10 +71,9 @@ class Site < ActiveRecord::Base
       end
       save
     end
-  
-    # Site changes will mean route changes so this method is called after_save.
-  
-    def reload_routes
-      ActionController::Routing::Routes.reload
-    end
+  end
+
+  def reload_routes
+    ActionController::Routing::Routes.reload
+  end
 end

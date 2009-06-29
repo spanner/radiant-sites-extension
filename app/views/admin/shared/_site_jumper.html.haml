@@ -21,8 +21,8 @@
         site: 
       %select{:id => "site_chooser", :name => "site_id", :onChange => 'this.form.submit()'}
         = options_from_collection_for_select(Site.find(:all), 'id', 'name', current_site.id)
-      = link_to "new site", new_site_url
+      = link_to "new site", new_admin_site_url
       |
-      = link_to "edit sites", sites_url
+      = link_to "edit sites", admin_sites_url
 
 

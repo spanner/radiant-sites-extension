@@ -1,4 +1,4 @@
-require_dependency 'application_controller'
+require_dependency 'application'
 
 class MultiSiteExtension < Radiant::Extension
   version "0.8.1"
@@ -28,7 +28,6 @@ class MultiSiteExtension < Radiant::Extension
     ActiveRecord::Validations::ClassMethods.send :include, MultiSite::ScopedValidation
 
     Page.send :include, MultiSite::PageExtensions
-    ResponseCache.send :include, MultiSite::ResponseCacheExtensions
 
     # Controller extensions
     ApplicationController.send :include, MultiSite::ControllerExtensions
