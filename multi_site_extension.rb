@@ -1,26 +1,32 @@
-require_dependency 'application'
+require_dependency 'application_controller'
 
 class MultiSiteExtension < Radiant::Extension
-  version "0.4"
+  version "0.8.1"
   description %{ Enables virtual sites to be created with associated domain names.
                  Also scopes the sitemap view to any given page (or the root of an
                  individual site) and allows model classes to be scoped. }
   url "http://radiantcms.org/"
 
   define_routes do |map|
-      map.resources :sites, :path_prefix => "/admin",
-                  :member => {
-                    :move_higher => :post,
-                    :move_lower => :post,
-                    :move_to_top => :put,
-                    :move_to_bottom => :put
-                  }
+    map.namespace :admin, :member => { :remove => :get } do |admin|
+      admin.resources :sites, :member => {
+        :move_higher => :post,
+        :move_lower => :post,
+        :move_to_top => :put,
+        :move_to_bottom => :put
+      }
+    end
   end
 
+
   def activate
+    require 'multi_site/route_extensions'
+    require 'multi_site/route_set_extensions'
+
     # Model extensions
     ActiveRecord::Base.send :include, MultiSite::ScopedModel
     ActiveRecord::Validations::ClassMethods.send :include, MultiSite::ScopedValidation
+
     Page.send :include, MultiSite::PageExtensions
     ResponseCache.send :include, MultiSite::ResponseCacheExtensions
 
@@ -34,8 +40,6 @@ class MultiSiteExtension < Radiant::Extension
     # AdminUI extensions
     Radiant::AdminUI.send :include, MultiSite::AdminUI unless defined? admin.site # UI is a singleton and already loaded
     admin.site = Radiant::AdminUI.load_default_site_regions
-
-    Radiant::Config["dev.host"] = 'preview' if Radiant::Config.table_exists?
 
     admin.pages.index.add :top, "admin/shared/site_jumper"
   end

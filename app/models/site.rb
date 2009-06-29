@@ -5,7 +5,7 @@ class Site < ActiveRecord::Base
   acts_as_list
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
-  order_by "position ASC"
+  default_scope :order => 'position ASC'
 
   class << self
     
@@ -58,18 +58,17 @@ class Site < ActiveRecord::Base
     uri.to_s
   end
   
-  protected
-  
-    # Creates an empty parentless page with draft status and an association with this site. Called after_create.
-  
-    def create_homepage
-      if self.homepage_id.blank?
-          self.homepage = self.build_homepage(:title => "#{self.name} Homepage", 
-                             :slug => "#{self.name.to_slug}", :breadcrumb => "Home", 
-                             :status => Status[:draft])
-          self.homepage.parts << PagePart.new(:name => "body", :content => "")
-          save
+  def create_homepage
+    if self.homepage_id.blank?
+      self.homepage = self.build_homepage(:title => "#{self.name} Homepage", 
+                         :slug => "#{self.name.to_slug}", :breadcrumb => "Home")
+      default_status = Radiant::Config['defaults.page.status']
+      self.homepage.status = Status[default_status] if default_status
+      default_parts = Radiant::Config['defaults.page.parts'].to_s.strip.split(/\s*,\s*/)
+      default_parts.each do |name|
+        self.homepage.parts << PagePart.new(:name => name, :filter_id => Radiant::Config['defaults.page.filter'])
       end
+      save
     end
   
     # Site changes will mean route changes so this method is called after_save.

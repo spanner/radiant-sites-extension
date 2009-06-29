@@ -18,7 +18,7 @@ module MultiSite::ResourceControllerExtensions
   # set_current_site is moved into here because the alternative ways of setting the site only matter in admin
   # for site_controller, it is always right to use the site corresponding to request.host
   # and we can do that just by setting Page.current_domain
-  # the main advantage is to simplify the path to cache
+  # the main advantage is to eliminate any database calls from the trip to a cache hit
 
   def set_current_site
     Page.current_site = current_site

@@ -6,7 +6,7 @@ module MultiSite
     def self.included(base)
       base.class_eval do
 
-        # Scoped models are given a before_validation method that forces an association with the correct site. It follows these ruls:
+        # Scoped models are given a before_validation method that forces an association with the correct site. It follows these rules:
         # * If the current_user is bound to a site, anything she creates is associated with that site
         # * If the current_user is bound to a site, she is not allowed to change site associations (this allows her to edit shared objects, until I find a way to make them only editable by unsited people, but not to change their shared status)
         # * If the current_user is not bound to a site and the model class is shareable, we leave it alone so as to respect user input
