@@ -14,7 +14,7 @@ class Site < ActiveRecord::Base
     
     def find_for_host(hostname = '')
       # the only real change here is that if we find no site, we create one with no domain
-      # in most cases we save a query, though
+      # in most cases we also manage to save a query
       matches = find(:all, :conditions => "sites.domain IS NOT NULL AND sites.domain != ''").select{|site| hostname == site.base_domain || hostname =~ Regexp.compile(site.domain) }
       matches.any? ? matches.first : catchall
     end

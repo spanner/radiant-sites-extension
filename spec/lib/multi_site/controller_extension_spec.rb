@@ -29,16 +29,17 @@ describe 'Multisite extended controller', :type => :controller do
 
   describe "with a request that matches a site" do
     before do
-      @site = sites(:testing)
+      controller.request.stub!(:host).and_return('test.host')
+    end
+    
+    it "should set current_domain" do
+      Page.should_receive(:current_domain=).with('test.host')
       get :show
+      Page.current_site.should == sites(:testing)
     end
     
     it "should respond correctly to current_site" do
-      controller.send(:current_site).should == @site
-    end
-    
-    it "should set Page.current_site" do
-      Page.current_site.should == @site
+      controller.send(:current_site).should == sites(:testing)
     end
 
   end

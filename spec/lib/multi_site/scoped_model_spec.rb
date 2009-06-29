@@ -8,12 +8,12 @@ end
 
 describe "scoped, unshareable model", :type => :model do
   dataset :sites
-  dataset :site_users
+  dataset :users
   
   before do
-    Snippet.stub!(:site_id).and_return(site_id(:mysite))
     Page.stub!(:current_site).and_return(sites(:mysite))
-    UserActionObserver.stub!(:current_user).and_return(users(:sharedadmin))
+    UserActionObserver.stub!(:current_user).and_return(users(:admin))
+    Snippet.stub!(:site_id).and_return(site_id(:mysite))
     Snippet.send :is_site_scoped
   end
   
@@ -122,7 +122,7 @@ end
 
 describe "scoped, shareable model", :type => :model do
   dataset :sites
-  dataset :site_users
+  dataset :users
 
   before do
     User.stub!(:site_id).and_return(site_id(:mysite))
@@ -133,43 +133,42 @@ describe "scoped, shareable model", :type => :model do
   describe "on instantiation with no site" do
     before do      
       @user = User.new(:name => 'test user', :login => 'test', :password => 'password', :email => 'test@spanner.org', :password_confirmation => 'password' )
+      @otheruser = User.new(:name => 'other user', :site => sites(:yoursite), :login => 'other', :password => 'password', :email => 'other@spanner.org', :password_confirmation => 'password' )
     end
     
-    it "should validate without being given the current site" do
+    it "should validate without a site" do
       @user.valid?.should be_true
       @user.site.should be_nil
+    end
+
+    it "should validate with a site" do
+      @otheruser.valid?.should be_true
+      @otheruser.site.should_not be_nil
     end
   end 
 
   describe "on retrieval" do
-    
-    it "should find a user from the current site" do
-      lambda {User.find(user_id(:myuser))}.should_not raise_error(ActiveRecord::RecordNotFound)
-    end
-
-    it "should find_by_name a user from the current site" do
-      User.find_by_name('myuser').should_not be_nil
-    end
-
-    it "should not find a user from another site" do
-      lambda {User.find(user_id(:youruser))}.should raise_error(ActiveRecord::RecordNotFound)
-    end
-
-    it "should not find_by_name a user from another site" do
-      User.find_by_name('youruser').should be_nil
+    before do      
+      @user = User.create(:name => 'shared user', :login => 'shared', :password => 'password', :email => 'test@spanner.org', :password_confirmation => 'password' )
+      @localuser = User.create(:name => 'local user', :site => sites(:mysite), :login => 'ocal', :password => 'password', :email => 'local@spanner.org', :password_confirmation => 'password' )
+      @otheruser = User.create(:name => 'other user', :site => sites(:yoursite), :login => 'other', :password => 'password', :email => 'other@spanner.org', :password_confirmation => 'password' )
     end
 
     it "should find a user with no site" do
-      lambda {User.find(user_id(:shareduser))}.should_not raise_error(ActiveRecord::RecordNotFound)
+      lambda {User.find(@user.id)}.should_not raise_error(ActiveRecord::RecordNotFound)
+    end
+    
+    it "should find a user from the current site" do
+      lambda {User.find(@localuser.id)}.should_not raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it "should find_by_name a user with no site" do
-      User.find_by_name('shareduser').should_not be_nil
+    it "should not find a user from another site" do
+      lambda {User.find(@otheruser.id)}.should raise_error(ActiveRecord::RecordNotFound)
     end
 
     it "should count the users from this site or with no site" do
-      # core radiant users_dataset creates 5 users with no site. Site_users_dataset creates 2 with this site and 2 with none
-      User.count(:all).should == 9  
+      # users_dataset creates 5 users with no site. we just made one shared and one local: total 7
+      User.count(:all).should == 7
     end
   end
   
