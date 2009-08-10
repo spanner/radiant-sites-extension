@@ -5,17 +5,18 @@ class Site < ActiveRecord::Base
   acts_as_list
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
-  order_by "position ASC"
-  # default_scope :order => 'position ASC'
+  default_scope :order => 'position ASC'
 
   class << self
+    attr_accessor :several
     
     # Given a hostname, Site.find_for_host will return the first site for which the hostname either equals the base domain or matches the domain pattern.
     # If no site is matched, it will call catchall
+    # hostname defaults to the value that the controller has dropped into Page.current_domain
+    # the only real change here is that if we find no site, we will create one with no domain
     
-    def find_for_host(hostname = '')
-      # the only real change here is that if we find no site, we create one with no domain
-      # in most cases we also manage to save a query
+    def find_for_host(hostname = Page.current_domain)
+      return catchall unless hostname
       matches = find(:all, :conditions => "sites.domain IS NOT NULL AND sites.domain != ''").select{|site| hostname == site.base_domain || hostname =~ Regexp.compile(site.domain) }
       matches.any? ? matches.first : catchall
     end
@@ -34,7 +35,7 @@ class Site < ActiveRecord::Base
     # Returns true if more than one site is present. This is normally only used to make interface decisions, eg whether to show the site-chooser dropdown.
     
     def several?
-      count > 1
+      several = (count > 1) if several.nil?
     end
   end
   
@@ -55,7 +56,7 @@ class Site < ActiveRecord::Base
   # Returns the fully specified web address for the development version of this site and the supplied path, or the root of this site if no path is given.
     
   def dev_url(path = "/")
-    uri = URI.join("http://#{Radiant::Config['dev.host']|| 'dev'}.#{self.base_domain}", path)
+    uri = URI.join("http://#{Radiant::Config['dev.host'] || 'dev'}.#{self.base_domain}", path)
     uri.to_s
   end
   

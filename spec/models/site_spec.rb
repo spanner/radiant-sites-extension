@@ -61,15 +61,11 @@ describe Site do
     sites(:yoursite).should eql(Site.find_for_host("yoursite.com"))
     sites(:yoursite).should eql(Site.find_for_host("yoursite.unknown.com"))
     sites(:default).should eql(Site.find_for_host("unknown.com"))
-    sites(:subdomain).should eql(Site.find_for_host("sub.unknown.com"))
-    sites(:subdomain).should eql(Site.find_for_host("sub.domain.com"))
-    sites(:nested).should eql(Site.find_for_host("nested.domain.com"))
   end
   
   it "should generate site url from path" do
     sites(:mysite).url.should eql("http://mysite.domain.com/")
     sites(:mysite).url("/about").should eql("http://mysite.domain.com/about")
-    sites(:nested).url("/grandchild").should eql("http://nested.domain.com/grandchild")
   end
   
   it "should generate dev site url from path" do

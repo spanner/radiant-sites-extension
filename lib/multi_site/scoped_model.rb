@@ -11,10 +11,10 @@ module MultiSite
       end
       
       # only option at the moment is :shareable, which we take to mean that sites are optional:
-      # if true it causes us not to set the site automatically or validate its presence
+      # if true it causes us not to set the site automatically or to validate its presence,
       # and to extend the scoping conditions so that objects with no site are returned as 
       # well as objects with the specified site
-      # that is, anything without a site is considered to be shared among all of them
+      # that is, anything without a site is considered to be shared among all sites
       # the default is false
       
       def is_site_scoped(options={})
@@ -33,7 +33,6 @@ module MultiSite
         Site.send(:has_many, plural_symbol_for_class)
 
         # site is set in a before_validation call added to UserActionObserver
-        
         validates_presence_of :site unless options[:shareable]
 
         class << self

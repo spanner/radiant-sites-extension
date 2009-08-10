@@ -6,11 +6,11 @@ Multi Site allows you to host multiple websites on a single Radiant installation
 
 ## (Forked) ##
 
-This fork has two main benefits: it eliminates all database access from the trip to cache, which I've found to reduce the load on a busy server quite significantly, and it adds a flexible but robust way to scope model classes to the current site. It's just a framework - nothing is scoped by default - but very easy to apply. See under scoped resources below.
+This fork adds a flexible but robust way to scope model classes to the current site. It's just a framework - nothing is scoped by default - but very easy to apply. See under scoped resources below.
 
 ### Status ###
 
-Hm. Late beta? This is pretty solid now and quite thoroughly tested.
+Fairly solid now and quite thoroughly tested. Should be a drop-in replacement for the standard multi_site.
 
 ### Installation ###
 
@@ -26,13 +26,13 @@ who kno?
 
 ### Compatibility ###
 
-This ought to be a drop-in replacement for the core multi_site. It differs from the original in that it will create a default site if none exists, but this should happen invisibly.
+This differs from the original in that it will create a default site if none exists, but this should happen invisibly.
 
 This version of multi_site does cause failures in radiant's main tests, usually when a site is required but the tests don't supply it. I will probably add a 'lax mode' at some point that doesn't mind if no site is defined.
 
 ### Scoped resources ###
 
-If you want to site-scope a model class (let's say you want your photo galleries to be site-specific as well as your pages), all you have to do is add a line to the top of the class:
+If you want to site-scope a model class (let's say you want your assets to be site-specific as well as your pages), all you have to do is add a line to the top of the class:
 
 	is_site_scoped
 

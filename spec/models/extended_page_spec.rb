@@ -20,24 +20,20 @@ describe Page do
     end
   end
 
-  
   describe ".find_by_url" do
-    it "should alias methods" do
-      Page.should respond_to(:find_by_url_with_sites)
-      Page.should respond_to(:find_by_url_without_sites)
-      Page.should respond_to(:current_site)
-      Page.should respond_to(:current_site=)
-    end
-    
-    it "should respect defaults" do
+    it "should default to the catchall site" do
       Page.current_site = nil
-      assert_equal pages(:home), Page.find_by_url("/")
+      Page.find_by_url("/").should == pages(:home)
     end
     
     it "should find site-scoped pages" do
       Page.current_site = sites(:mysite)
-      assert_equal pages(:home), Page.find_by_url("/")
-      assert_equal pages(:news), Page.find_by_url("/news")
+      Page.find_by_url("/mypage").should == pages(:myotherpage)
+    end
+
+    it "should not find pages outside the site" do
+      Page.current_site = sites(:mysite)
+      Page.find_by_url("/yourotherpage").should be_nil
     end
   end
   

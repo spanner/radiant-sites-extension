@@ -1,7 +1,7 @@
 module MultiSite::PagesControllerExtensions
   def self.included(base)
     base.class_eval {
-      alias_method_chain :find_current_site, :root
+      alias_method_chain :discover_current_site, :root
       alias_method_chain :index, :site
       alias_method_chain :continue_url, :site
       alias_method_chain :remove, :back
@@ -13,12 +13,11 @@ module MultiSite::PagesControllerExtensions
     }
   end
 
-  # chained: PagesControllerExtensions::find_current_site_with_root 
-  #           -> ResourceControllerExtensions::find_current_site_with_options 
-  #           -> ControllerExtensions::find_current_site
+  # for compatibility with the standard issue of multi_site, 
+  # a root parameter overrides other ways of setting site
 
-  def find_current_site_with_root
-    site_from_root || find_current_site_without_root
+  def discover_current_site_with_root
+    site_from_root || discover_current_site_without_root
   end
 
   def site_from_root
@@ -28,8 +27,9 @@ module MultiSite::PagesControllerExtensions
   end
 
   def index_with_site
-    @site ||= current_site
-    @homepage ||= @site.homepage || Page.homepage
+    @site ||= Page.current_site
+    @homepage ||= @site.homepage if @site
+    @homepage ||= Page.homepage
     response_for :plural
   end
 
