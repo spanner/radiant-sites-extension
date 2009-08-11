@@ -69,7 +69,7 @@ module MultiSite
       end
 
       def current_site!
-        raise(ActiveRecord::SiteNotFound, "no site found", caller) if sites? && !self.current_site
+        raise(ActiveRecord::SiteNotFound, "#{self} is site-scoped but current_site is #{self.current_site.inspect}", caller) if sites? && !self.current_site
         self.current_site
       end
 
