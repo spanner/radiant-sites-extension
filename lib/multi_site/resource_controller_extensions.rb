@@ -6,6 +6,11 @@ module MultiSite::ResourceControllerExtensions
     }
   end
 
+  def current_site=(site=nil)
+    Page.current_site = site
+    set_session_site
+  end
+
 protected
 
   def discover_current_site_with_input
