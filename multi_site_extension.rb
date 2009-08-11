@@ -33,6 +33,7 @@ class MultiSiteExtension < Radiant::Extension
     Page.send :include, MultiSite::PageExtensions
 
     # Controller extensions
+    ApplicationController.send :include, MultiSite::ApplicationControllerExtensions
     SiteController.send :include, MultiSite::SiteControllerExtensions
     Admin::ResourceController.send :include, MultiSite::ResourceControllerExtensions
     Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
