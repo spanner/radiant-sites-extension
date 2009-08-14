@@ -45,6 +45,9 @@ class MultiSiteExtension < Radiant::Extension
       admin.site = Radiant::AdminUI.load_default_site_regions
       admin.pages.index.add :top, "admin/shared/site_jumper"
     end
+
+    admin.tabs.add "Sites", "/admin/sites", :visibility => [:admin]
+
   end
 
   def deactivate
