@@ -11,8 +11,8 @@ module MultiSite::AdminUI
       
       protected
 
-        # The site-admin pages is shared with these regions:
-
+        # The site-admin pages have these regions:
+        
         # Edit view:
         # * main: edit_header, edit_form
         # * form: edit_name edit_domain edit_homepage

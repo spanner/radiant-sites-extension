@@ -64,6 +64,24 @@ module MultiSite
         end
       end
       
+      # this only works with :all and :first
+      # and should only be used in odd cases like migration
+      def find_without_site(*args)
+        options = args.extract_options!
+        validate_find_options(options)
+        set_readonly_option!(options)
+
+        case args.first
+          when :first then find_initial_without_site(options)     # defined here
+          when :all   then find_every_without_site(options)       # already defined by the alias chain
+        end
+      end
+      
+      def find_initial_without_site(options)
+        options.update(:limit => 1)
+        find_every_without_site(options).first
+      end
+      
       def sites?
         Site.several?
       end
