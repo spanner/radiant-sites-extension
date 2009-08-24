@@ -2,7 +2,7 @@ module MultiSite::ApplicationControllerExtensions
 
   def self.included(base)
     base.class_eval {
-      before_filter :set_site
+      prepend_before_filter :set_site
       helper_method :current_site, :current_site=
     }
   end
