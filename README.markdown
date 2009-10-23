@@ -10,7 +10,11 @@ This fork adds a flexible but robust way to scope model classes to the current s
 
 ### Status ###
 
-Fairly solid now and quite thoroughly tested. Should be a drop-in replacement for the standard multi_site.
+Fairly solid now and quite thoroughly tested. Should be a drop-in replacement for the standard multi_site. The interface is about to change, but the present one will still be supported.
+
+### Requirements ###
+
+There are no absolute requirements but you will need to install our submenu extension since that has taken the job of showing the site-chooser above any site-scoped index page.
 
 ### Installation ###
 
