@@ -17,10 +17,6 @@ Fairly solid now and quite thoroughly tested. Should be a drop-in replacement fo
 	$ git submodule add git://github.com/spanner/radiant-multi-site-extension.git vendor/extensions/multi_site
 	$ rake radiant:extensions:multi_site:migrate
 	$ rake radiant:extensions:multi_site:update
-
-or maybe soon just:
-
-	$ rake ray:extension:install name="multi-site" hub="spanner"
 	
 who kno?
 
@@ -44,7 +40,11 @@ The scoping takes effect at the ActiveRecord level - it wraps `with_scope` round
 
 If a site-scoped class includes any calls to `validates_uniqueness_of`, those too will be scoped to the site. There's a hack there, though: the validations are defined with the model and saved as [procs](http://casperfabricius.com/site/2008/12/06/removing-rails-validations-with-metaprogramming/) which causes all sorts of misery when you want to change them. Instead we've alias_chained the `validates_uniqueness_of` method to apply scope from the start. This has to happen very early in the initialisation procedure, when we don't really have much configuration information, so the uniqueness validation scope is applied to every model with a `site_id` column. I hope to find a better solution but it does work.
 
+**Please Note:** a `site_scoped` class must be watched by the `UserActionObserver` in order to get the before_validation hook that sets the site id.
+
 There is, or will soon be, more about this [in the wiki](http://wiki.github.com/spanner/radiant-multi-site-extension) and one day I'll get round to posting some [proper documentation](http://spanner.org/radiant/multi_site).
+
+
 
 ### Examples ###
 

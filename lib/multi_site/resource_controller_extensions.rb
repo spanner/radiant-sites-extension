@@ -10,7 +10,13 @@ module MultiSite::ResourceControllerExtensions
     Page.current_site = site
     set_session_site
   end
+  
+  # among other things this determines whether the site chooser is shown in the submenu
 
+  def sited_model?
+    model_class == Page || model_class.is_site_scoped?
+  end
+  
 protected
 
   def discover_current_site_with_input
