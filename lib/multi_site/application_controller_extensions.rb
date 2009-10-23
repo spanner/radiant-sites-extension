@@ -15,6 +15,12 @@ module MultiSite::ApplicationControllerExtensions
     Page.current_site = site
   end
 
+  # this is overridden in Admin::ResourceController to respond correctly
+  
+  def sited_model?
+    false
+  end
+  
 protected
 
   def set_site
@@ -33,10 +39,4 @@ protected
     Site.find_for_host(request.host)
   end
 
-  # this is overridden in Admin::ResourceController to respond correctly
-  
-  def sited_model?
-    false
-  end
-  
 end

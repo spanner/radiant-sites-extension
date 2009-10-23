@@ -16,21 +16,18 @@ class Site < ActiveRecord::Base
     # the only real change here is that if we find no site, we will create one with no domain
     
     def find_for_host(hostname = '')
-      Rails.logger.warn "!   Site.find_for_host(#{hostname})"
       return catchall unless hostname
       default, specific = find(:all).partition {|s| s.domain.blank? }
       matching = specific.find do |site|
         hostname == site.base_domain || hostname =~ Regexp.compile(site.domain)
       end
       site = matching || default.first || catchall     # there is some duplication in catchall but it's only called once
-      Rails.logger.warn "-> #{site.name})"
       site
     end
     
     # Site.catchall returns the the first site it can find with an empty domain pattern. If none is found, we are probably brand new, so a workable default site is created.
     
     def catchall
-      Rails.logger.warn "!   Site.catchall"
       find_by_domain('') || find_by_domain(nil) || create({
         :domain => '', 
         :name => 'default_site', 
