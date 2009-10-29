@@ -14,6 +14,12 @@ module MultiSite::PageExtensions
         raise Page::MissingRootPageError unless root
         root.find_by_url(url, live)
       end
+      def current_site
+        @current_site ||= Site.default
+      end
+      def current_site=(site)
+        @current_site = site
+      end
     end
   end
   

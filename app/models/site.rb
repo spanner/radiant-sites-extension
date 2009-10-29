@@ -10,25 +10,25 @@ class Site < ActiveRecord::Base
   class << self
     attr_accessor :several
     
-    # Given a hostname, Site.find_for_host will return the first site for which the hostname either equals the base domain or matches the domain pattern.
-    # If no site is matched, it will call catchall
-    # hostname defaults to the value that the controller has dropped into Page.current_domain
-    # the only real change here is that if we find no site, we will create one with no domain
+    # I've added one or two sql queries here for the sake of a separate default method
     
     def find_for_host(hostname = '')
-      return catchall unless hostname
-      default, specific = find(:all).partition {|s| s.domain.blank? }
-      matching = specific.find do |site|
-        hostname == site.base_domain || hostname =~ Regexp.compile(site.domain)
-      end
-      site = matching || default.first || catchall     # there is some duplication in catchall but it's only called once
-      site
+      return default if hostname.blank?
+      sites = find(:all, :conditions => "domain IS NOT NULL and domain != ''")
+      site = sites.find { |site| hostname == site.base_domain || hostname =~ Regexp.compile(site.domain) }
+      site || default
     end
     
-    # Site.catchall returns the the first site it can find with an empty domain pattern. If none is found, we are probably brand new, so a workable default site is created.
+    # Site.default returns the the first site it can find with an empty domain pattern.
+
+    def default
+      find_by_domain('') || find_by_domain(nil) || catchall
+    end
+    
+    # If none is found, we are probably brand new, so a workable default site is created.
     
     def catchall
-      find_by_domain('') || find_by_domain(nil) || create({
+       create({
         :domain => '', 
         :name => 'default_site', 
         :base_domain => 'localhost',

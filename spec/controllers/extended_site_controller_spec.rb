@@ -20,8 +20,8 @@ describe SiteController do
     end
     
     it "should have chosen the catchall site" do
+      Page.should_receive(:current_site=).with(sites(:default)).at_least(:once)
       get :show_page, :url => '/'
-      Page.current_site.should == sites(:default)
     end
   end 
   
@@ -33,8 +33,9 @@ describe SiteController do
     end
         
     it "should have chosen the matching site" do
+      Page.should_not_receive(:current_site=).with(sites(:default))
+      Page.should_receive(:current_site=).with(sites(:yoursite)).at_least(:once)
       get :show_page, :url => '/yourpage'
-      Page.current_site.should == sites(:yoursite)
     end
     
     it "should return a page from the present site" do
