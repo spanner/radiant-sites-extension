@@ -41,7 +41,6 @@ class MultiSiteExtension < Radiant::Extension
     SiteController.send :include, MultiSite::SiteControllerExtensions
     Admin::ResourceController.send :include, MultiSite::ResourceControllerExtensions
     Admin::PagesController.send :include, MultiSite::PagesControllerExtensions
-    UserActionObserver.send :include, MultiSite::ActionObserverExtensions
 
     unless defined? admin.site
       Radiant::AdminUI.send :include, MultiSite::AdminUI 
@@ -49,7 +48,6 @@ class MultiSiteExtension < Radiant::Extension
     end
 
     admin.tabs.add "Sites", "/admin/sites", :visibility => [:admin]
-
   end
 
   def deactivate

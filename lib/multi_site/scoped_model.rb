@@ -32,7 +32,7 @@ module MultiSite
         belongs_to :site
         Site.send(:has_many, plural_symbol_for_class)
 
-        # site is set in a before_validation call added to UserActionObserver
+        before_validation :set_site
         validates_presence_of :site unless options[:shareable]
 
         class << self
@@ -65,7 +65,7 @@ module MultiSite
       end
       
       # this only works with :all and :first
-      # and should only be used in odd cases like migration
+      # and should only be used in odd cases like migration.
       def find_without_site(*args)
         options = args.extract_options!
         validate_find_options(options)
@@ -87,7 +87,7 @@ module MultiSite
       end
 
       def current_site!
-        raise(ActiveRecord::SiteNotFound, "#{self} is site-scoped but current_site is #{self.current_site.inspect}", caller) if sites? && !self.current_site
+        raise(ActiveRecord::SiteNotFound, "#{self} is site-scoped but current_site is #{self.current_site.inspect}", caller) if sites? && !self.current_site && !self.is_shareable?
         self.current_site
       end
 
@@ -117,7 +117,6 @@ module MultiSite
       def is_shareable?
         !!self.shareable
       end
-
     end
   
     module ScopedInstanceMethods
