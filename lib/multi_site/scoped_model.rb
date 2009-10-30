@@ -122,7 +122,7 @@ module MultiSite
     module ScopedInstanceMethods
       protected
         def set_site
-          self.site ||= self.class.current_site!
+          self.site ||= self.class.current_site! unless self.class.is_shareable?
         end
     end
   end
