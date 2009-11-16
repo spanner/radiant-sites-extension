@@ -7,7 +7,7 @@ describe "AdminUI extensions for multi_site" do
   end
 
   it "should be included into Radiant::AdminUI" do
-    Radiant::AdminUI.included_modules.should include(MultiSite::AdminUI)
+    Radiant::AdminUI.included_modules.should include(Sites::AdminUI)
   end
 
   it "should define a collection of Region Sets for sites" do

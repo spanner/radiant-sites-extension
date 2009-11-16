@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 TestController = Class.new(ApplicationController)
 
-describe TestController, "for MultiSite routing" do
+describe TestController, "for Sites routing" do
   dataset :sites
   
   before(:all) do

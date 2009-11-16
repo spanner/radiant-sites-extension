@@ -1,4 +1,4 @@
-module MultiSite::ApplicationControllerExtensions
+module Sites::ApplicationControllerExtensions
 
   def self.included(base)
     base.class_eval {

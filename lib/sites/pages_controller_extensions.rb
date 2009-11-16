@@ -1,4 +1,4 @@
-module MultiSite::PagesControllerExtensions
+module Sites::PagesControllerExtensions
   def self.included(base)
     base.class_eval {
       alias_method_chain :discover_current_site, :root

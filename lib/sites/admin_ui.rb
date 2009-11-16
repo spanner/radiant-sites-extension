@@ -1,7 +1,7 @@
 # This is included into AdminUI and defines editing regions for the site administration pages.
 # Note that the AdminUI object is a singleton and it is not sufficient to add to its initialization routines: you also have to call load_default_site_regions on the admin singleton that has already been defined.
 
-module MultiSite::AdminUI
+module Sites::AdminUI
 
  def self.included(base)
    base.class_eval do

@@ -1,4 +1,4 @@
-module MultiSite::ScopedValidation
+module Sites::ScopedValidation
 
   def self.included(base)
 
@@ -29,4 +29,4 @@ module MultiSite::ScopedValidation
   end
 end
 
-ActiveRecord::Validations::ClassMethods.send :include, MultiSite::ScopedValidation
+ActiveRecord::Validations::ClassMethods.send :include, Sites::ScopedValidation

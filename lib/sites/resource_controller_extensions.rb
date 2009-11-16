@@ -1,4 +1,4 @@
-module MultiSite::ResourceControllerExtensions
+module Sites::ResourceControllerExtensions
 
   def self.included(base)
     base.class_eval {

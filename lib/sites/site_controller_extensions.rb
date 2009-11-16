@@ -1,4 +1,4 @@
-module MultiSite::SiteControllerExtensions
+module Sites::SiteControllerExtensions
   def self.included(base)
     base.class_eval do
       before_filter :set_site

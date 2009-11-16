@@ -1,4 +1,4 @@
-module MultiSite
+module Sites
   module RouteExtensions
 
     def self.included(base)
@@ -18,4 +18,4 @@ module MultiSite
   end
 end
 
-ActionController::Routing::Route.send :include, MultiSite::RouteExtensions
+ActionController::Routing::Route.send :include, Sites::RouteExtensions

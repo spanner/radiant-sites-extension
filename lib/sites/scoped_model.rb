@@ -1,4 +1,4 @@
-module MultiSite
+module Sites
   
   module ScopedModel
     def self.included(base)
@@ -6,45 +6,34 @@ module MultiSite
     end
   
     module ClassMethods
-      def is_site_scoped?
+      def has_site?
         false
       end
+      alias :is_site_scoped? :has_site?
       
-      # only option at the moment is :shareable, which we take to mean that sites are optional:
-      # if true it causes us not to set the site automatically or to validate its presence,
-      # and to extend the scoping conditions so that objects with no site are returned as 
-      # well as objects with the specified site
-      # that is, anything without a site is considered to be shared among all sites
-      # the default is false
-      
-      def is_site_scoped(options={})
-        return if is_site_scoped?
-        
-        options = {
-          :shareable => false
-        }.merge(options)
+      def has_site(old_args={})
+        return if has_site?
 
         class_eval <<-EO
-          extend MultiSite::ScopedModel::ScopedClassMethods
-          include MultiSite::ScopedModel::ScopedInstanceMethods
+          extend Sites::ScopedModel::ScopedClassMethods
+          include Sites::ScopedModel::ScopedInstanceMethods
         EO
         
         belongs_to :site
         Site.send(:has_many, plural_symbol_for_class)
 
         before_validation :set_site
-        validates_presence_of :site unless options[:shareable]
+        validates_presence_of :site
 
         class << self
-          attr_accessor :shareable
           alias_method_chain :find_every, :site
           %w{count average minimum maximum sum}.each do |getter|
             alias_method_chain getter.intern, :site
           end
         end
-        
-        self.shareable = options[:shareable]
       end
+      alias :is_site_scoped :has_site
+      
     end
 
     module ScopedClassMethods
@@ -87,7 +76,7 @@ module MultiSite
       end
 
       def current_site!
-        raise(ActiveRecord::SiteNotFound, "#{self} is site-scoped but current_site is #{self.current_site.inspect}", caller) if sites? && !self.current_site && !self.is_shareable?
+        raise(ActiveRecord::SiteNotFound, "#{self} is site-scoped but current_site is #{self.current_site.inspect}", caller) if sites? && !self.current_site
         self.current_site
       end
 
@@ -96,33 +85,22 @@ module MultiSite
       end
             
       def site_scope_condition
-        if self.shareable
-          condition = ""
-          condition << "#{self.table_name}.site_id = #{self.current_site.id} OR " if self.current_site
-          condition << "#{self.table_name}.site_id IS NULL" 
-        else
-          condition = "#{self.table_name}.site_id = #{self.current_site!.id}"
-        end
-        condition
+        "#{self.table_name}.site_id = #{self.current_site!.id}"
       end
     
       def plural_symbol_for_class
         self.to_s.pluralize.underscore.intern
       end
       
-      def is_site_scoped?
+      def has_site?
         true
-      end
-
-      def is_shareable?
-        !!self.shareable
       end
     end
   
     module ScopedInstanceMethods
       protected
         def set_site
-          self.site ||= self.class.current_site! unless self.class.is_shareable?
+          self.site ||= self.class.current_site!
         end
     end
   end
