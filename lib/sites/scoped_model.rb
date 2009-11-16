@@ -83,7 +83,7 @@ module MultiSite
       end
       
       def sites?
-        Site.several?
+        Site.table_exists? && Site.several?
       end
 
       def current_site!

@@ -12,6 +12,11 @@ This fork adds a flexible but robust way to scope model classes to the current s
 
 Fairly solid now and quite thoroughly tested. Should be a drop-in replacement for the standard multi_site. The interface is about to change, but the present one will still be supported.
 
+### To do ###
+
+* Change interface to `has_site` and `has_many_sites` to allow, for example, a user access to some but not all sites. 
+* Make it possible to site-scope config entries without breaking the cache
+
 ### Warning ###
 
 I've just changed the site-finding logic so that Site.default is called in any circumstances. It makes life much easier in tests and console and should let me take out a lot of conditional code. It shouldn't affect normal use, but you know. Please let me know if anything goes wrong.
