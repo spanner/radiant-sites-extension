@@ -10,9 +10,22 @@ module Sites
         false
       end
       alias :is_site_scoped? :has_site?
+
+      def can_have_sites?
+        false
+      end
+
+      def has_sites?
+        false
+      end
+      
+      def plural_symbol_for_class
+        self.to_s.pluralize.underscore.intern
+      end
       
       def has_site(old_args={})
         return if has_site?
+        return has_many_sites if(old_args[:shareable])
 
         class_eval <<-EO
           extend Sites::ScopedModel::ScopedClassMethods
@@ -34,6 +47,21 @@ module Sites
       end
       alias :is_site_scoped :has_site
       
+      def has_many_sites
+        return if can_have_sites?
+
+        class_eval <<-EO
+          extend Sites::ScopedModel::LinkedClassMethods
+          include Sites::ScopedModel::LinkedInstanceMethods
+        EO
+
+        has_and_belongs_to_many :sites
+        Site.send(:has_and_belongs_to_many, plural_symbol_for_class)
+        
+        named_scope :for_site, lambda {|site|
+          {:conditions => ["site_id = ?", site.id]}
+        }
+      end
     end
 
     module ScopedClassMethods
@@ -87,11 +115,7 @@ module Sites
       def site_scope_condition
         "#{self.table_name}.site_id = #{self.current_site!.id}"
       end
-    
-      def plural_symbol_for_class
-        self.to_s.pluralize.underscore.intern
-      end
-      
+          
       def has_site?
         true
       end
@@ -103,6 +127,23 @@ module Sites
           self.site ||= self.class.current_site!
         end
     end
+    
+    
+    
+    
+    module LinkedClassMethods
+      def can_have_sites?
+        true
+      end
+      def has_sites?
+        sites.any?
+      end
+      
+    end
+    module LinkedInstanceMethods
+      
+    end
+    
   end
 end
 
