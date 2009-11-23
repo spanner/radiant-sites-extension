@@ -10,13 +10,13 @@ If it works, it's by accident.
 
 ### To do ###
 
-* Change interface to `has_site` and `has_many_sites` to allow, for example, a user access to some but not all sites. 
-* Site-scoped and global configuration settings (without breaking the cache) 
+* Change interface to `has_site` and `has_many_sites` to allow, for example, a user access to some but not all sites.
+* Site-scoped (and global) Radiant::Config (without breaking the cache) 
 * YAML site templates and chooser 
 * Non-horrible site admin interface
 * Userland site-creation interface
 * Site import and export
-* dashboard integration
+* Dashboard integration
 
 ## Requirements ##
 
@@ -25,6 +25,13 @@ There are no absolute requirements but you will want to install our submenu exte
 ## Installation ##
 
 	$ git submodule add git://github.com/spanner/radiant-sites-extension.git vendor/extensions/sites
+	
+If you're coming from `multi_site`:
+
+	$ rake radiant:extensions:sites:from_multisite
+
+and then:
+
 	$ rake radiant:extensions:sites:migrate
 	$ rake radiant:extensions:sites:update
 

@@ -128,20 +128,19 @@ module Sites
         end
     end
     
-    
-    
-    
     module LinkedClassMethods
       def can_have_sites?
         true
       end
-      def has_sites?
-        sites.any?
-      end
-      
     end
     module LinkedInstanceMethods
+      def has_many_sites
+        sites.count > 1
+      end
       
+      def has_one_site
+        sites.count == 1
+      end
     end
     
   end

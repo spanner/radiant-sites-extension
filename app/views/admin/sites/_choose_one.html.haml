@@ -1,0 +1,8 @@
+- if current_user.has_many_sites
+  - fields_for object do |ff|
+    %p
+      = ff.label :site_id, "Site:"
+      = ff.select, :site_id, current_user.sites.map { |s| [s.name, s.id] }
+- else
+  - fields_for object do |ff|
+    = ff.hidden_field :site_id, current_user.site.id

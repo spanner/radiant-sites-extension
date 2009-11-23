@@ -1,0 +1,10 @@
+- if current_user.has_many_sites
+  - fields_for object do |ff|
+    %p
+      = ff.label :sites, "Sites:"
+      - current_user.sites.each do |site|
+        = ff.check_box :sites, site.id
+        %br
+- else
+  - fields_for object do |ff|
+    = ff.hidden_field :sites, site.id
