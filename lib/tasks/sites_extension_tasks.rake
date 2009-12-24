@@ -4,6 +4,7 @@ namespace :radiant do
       
       desc "Runs the migration of the Sites extension"
       task :migrate => :environment do
+        Rake::Task["radiant:extensions:sites:from_multisite"].invoke
         require 'radiant/extension_migrator'
         if ENV["VERSION"]
           SitesExtension.migrator.migrate(ENV["VERSION"].to_i)

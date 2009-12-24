@@ -26,11 +26,7 @@ There are no absolute requirements but you will want to install our submenu exte
 
 	$ git submodule add git://github.com/spanner/radiant-sites-extension.git vendor/extensions/sites
 	
-If you're coming from `multi_site`:
-
-	$ rake radiant:extensions:sites:from_multisite
-
-and then:
+If you're coming from multi_site, don't run `rake db:migrate:extensions`: the radiant migrator ignores the migration task defined here, which does some useful checking of `multi_site` migrations. Instead, this:
 
 	$ rake radiant:extensions:sites:migrate
 	$ rake radiant:extensions:sites:update
