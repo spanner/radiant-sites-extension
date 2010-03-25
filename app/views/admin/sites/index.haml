@@ -15,8 +15,6 @@
           %th.basedomain Base domain
         - thead.modify_header do
           %th.remove Modify
-        - thead.order_header do
-          %th.order Order
   %tbody
     - @sites.each do |site|
       %tr.node.level-1
@@ -32,10 +30,7 @@
               = h(site.base_domain)
           - tbody.modify_cell do
             %td.remove
-              = link_to image("remove.png", :alt => "Remove"), admin_site_path(site), :method => :delete, :confirm => "Are you sure you want to permanently remove #{site.name}?"
-          - tbody.order_cell do
-            %td.order
-              = order_links(site)
+              = link_to "remove", admin_site_path(site), :method => :delete, :confirm => "Are you sure you want to permanently remove #{site.name}?"
 
 - render_region :bottom do |bottom|
   - bottom.new_button do

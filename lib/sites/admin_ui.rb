@@ -31,8 +31,8 @@ module Sites::AdminUI
               edit.form_bottom.concat %w{edit_timestamp edit_buttons}
             end
             site.index = Radiant::AdminUI::RegionSet.new do |index|
-              index.thead.concat %w{title_header domain_header basedomain_header modify_header order_header}
-              index.tbody.concat %w{title_cell domain_cell basedomain_cell modify_cell order_cell}
+              index.thead.concat %w{title_header domain_header basedomain_header modify_header}
+              index.tbody.concat %w{title_cell domain_cell basedomain_cell modify_cell}
               index.bottom.concat %w{new_button}
             end
             site.remove = site.index
