@@ -47,7 +47,7 @@ class Site < ActiveRecord::Base
   validates_presence_of :name, :base_domain
   validates_uniqueness_of :domain
   
-  after_create :create_homepage
+  before_save :create_homepage
   after_save :reload_routes
   
   # Returns the fully specified web address for the supplied path, or the root of this site if no path is given.

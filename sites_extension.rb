@@ -35,6 +35,10 @@ class SitesExtension < Radiant::Extension
     Admin::ResourceController.send :include, Sites::ResourceControllerExtensions
     Admin::PagesController.send :include, Sites::PagesControllerExtensions
 
+    Layout.send :has_site
+    Snippet.send :has_site
+    User.send :has_many_sites
+
     unless defined? admin.site
       Radiant::AdminUI.send :include, Sites::AdminUI 
       admin.site = Radiant::AdminUI.load_default_site_regions
