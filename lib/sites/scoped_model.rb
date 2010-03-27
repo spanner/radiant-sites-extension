@@ -57,10 +57,6 @@ module Sites
 
         has_and_belongs_to_many :sites
         Site.send(:has_and_belongs_to_many, plural_symbol_for_class)
-        
-        named_scope :for_site, lambda {|site|
-          {:conditions => ["site_id = ?", site.id]}
-        }
       end
     end
 
@@ -82,7 +78,8 @@ module Sites
       end
       
       # this only works with :all and :first
-      # and should only be used in odd cases like migration.
+      # and only meant for use in special cases like migration.
+      
       def find_without_site(*args)
         options = args.extract_options!
         validate_find_options(options)
