@@ -2,17 +2,13 @@ require_dependency 'application_controller'
 
 class SitesExtension < Radiant::Extension
   version "1.0"
-  description %{ Virtual sites with templates, scoping framework, import-export, friendly admin and userland site- (and account-) creation tools. }
+  description %{ Virtual sites with templates, scoping framework, import-export, friendly admin and userland site- (and account-) creation tools. Far from complete.}
   url "http://spanner.org/radiant/sites"
 
   define_routes do |map|
     map.namespace :admin, :member => { :remove => :get } do |admin|
       admin.resources :sites
     end    
-  end
-
-  extension_config do |config|
-    config.extension 'submenu'
   end
 
   def activate
@@ -44,7 +40,13 @@ class SitesExtension < Radiant::Extension
       admin.site = Radiant::AdminUI.load_default_site_regions
     end
 
-    admin.tabs.add "Sites", "/admin/sites", :visibility => [:admin]
+    if respond_to?(:tab)
+      tab("Content") do
+        add_item("Sites", "/admin/sites", :visibility => [:admin])
+      end
+    else
+      admin.tabs.add "Sites", "/admin/sites", :visibility => [:admin]
+    end
   end
 
   def deactivate

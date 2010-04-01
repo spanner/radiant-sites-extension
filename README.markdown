@@ -2,7 +2,9 @@
 
 Developed from the original `multi_site` extension, itself inspired by the old virtual_domain behaviour (anyone else remember that?)
 
-This is extension is in development and doesn't work yet. It takes our fork of multi_site and adds site templates, import-export, subdomain-creation and other requirements for creating new sites on the fly. Some of these features may later spin off into their own extensions, but we'll start them off together here and see what happens.
+This is extension is in development and only works in places. It takes our fork of multi_site and improves on it here and there. Soon it will add site templates, import-export, subdomain-creation and other requirements for creating new sites on the fly. Some of these features may later spin off into their own extensions, but we'll start them off together here and see what happens.
+
+Some of this is likely to move into core, but only the very essential parts that allow sites to happen at all.
 
 ## Status
 
@@ -20,7 +22,7 @@ If it works, it's by accident.
 
 ## Requirements ##
 
-There are no absolute requirements but you will want to install our submenu extension since that has taken over the job of showing the site-chooser above any site-scoped index page.
+None at the moment.
 
 ## Installation ##
 
@@ -42,12 +44,6 @@ If you want selective availability of some resources to many sites (or many site
 	has_many_sites
 
 The scoping takes effect at the ActiveRecord level - it wraps `with_scope` round every call to find (actually, to find_every), count and similar methods. If an object is out of site scope it is as though it didn't exist. This usually means your controller and view code hardly need to change at all: they just see fewer objects.
-
-You can explicitly state that something 
-
-	has_no_site
-
-Which is the same as not saying that it does have a site, except that it will negate any previous `has_site` declaration and might be useful in a subclass.
 
 ### Compatibility ###
 
