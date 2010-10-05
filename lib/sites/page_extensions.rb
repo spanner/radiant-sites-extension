@@ -3,9 +3,10 @@
 module Sites::PageExtensions
   def self.included(base)
     base.class_eval {
+      has_site
       alias_method_chain :url, :sites
       mattr_accessor :current_site
-      has_one :site, :foreign_key => "homepage_id", :dependent => :nullify
+      has_one :homed_site, :foreign_key => "homepage_id", :dependent => :nullify, :class_name => 'Site'
     }
     base.extend ClassMethods
     class << base
@@ -17,10 +18,12 @@ module Sites::PageExtensions
       def current_site
         @current_site ||= Site.default
       end
+      
       def current_site=(site)
         @current_site = site
       end
     end
+
   end
   
   module ClassMethods
@@ -37,6 +40,16 @@ module Sites::PageExtensions
       parent.child_url(self)
     else
       "/"
+    end
+  end
+
+  def ancestral_site
+    if self.homed_site
+      self.homed_site 
+    elsif self.parent
+      self.parent.ancestral_site
+    else 
+      nil
     end
   end
   

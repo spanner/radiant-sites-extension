@@ -33,7 +33,7 @@ module Sites
         EO
         
         belongs_to :site
-        Site.send(:has_many, plural_symbol_for_class)
+        Site.send(:has_many, plural_symbol_for_class, :dependent => :destroy)
 
         before_validation :set_site
         validates_presence_of :site

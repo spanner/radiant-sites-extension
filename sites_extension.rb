@@ -5,12 +5,6 @@ class SitesExtension < Radiant::Extension
   description %{ Virtual sites with templates, scoping framework, import-export, friendly admin and userland site- (and account-) creation tools. Far from complete.}
   url "http://spanner.org/radiant/sites"
 
-  define_routes do |map|
-    map.namespace :admin, :member => { :remove => :get } do |admin|
-      admin.resources :sites
-    end    
-  end
-
   def activate
     # ActionController::Routing modules are required rather than sent as includes
     # because the routing persists between dev. requests and is not compatible
@@ -18,11 +12,12 @@ class SitesExtension < Radiant::Extension
     require 'sites/route_extensions'
     require 'sites/route_set_extensions'
     
-    # likewise for ScopedValidation, which is a pre-emptive hack that shouldn't run more than once.
+    # likewise for ScopedValidation, which is a nasty hack that doesn't want to reload
     require 'sites/scoped_validation'
 
     # Model extensions
     ActiveRecord::Base.send :include, Sites::ScopedModel
+    # Page.send :has_site
     Page.send :include, Sites::PageExtensions
 
     # Controller extensions
