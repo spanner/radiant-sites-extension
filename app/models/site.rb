@@ -28,11 +28,11 @@ class Site < ActiveRecord::Base
     # If none is found, we are probably brand new, so a workable default site is created.
     
     def catchall
-       create({
+      create({
         :domain => '', 
         :name => 'default_site', 
         :base_domain => 'localhost',
-        :homepage => Page.find_by_parent_id(nil)
+        :homepage => Page.find_without_site(:first, :conditions => "parent_id IS NULL")
       })
     end
     
@@ -47,8 +47,7 @@ class Site < ActiveRecord::Base
   validates_presence_of :name, :base_domain
   validates_uniqueness_of :domain
   
-  before_save :create_homepage
-  after_save :reload_routes
+  # after_save :reload_routes
   
   # Returns the fully specified web address for the supplied path, or the root of this site if no path is given.
   
@@ -64,21 +63,7 @@ class Site < ActiveRecord::Base
     uri.to_s
   end
   
-  def create_homepage
-    if self.homepage_id.blank?
-      self.homepage = self.build_homepage(:title => "#{self.name} Homepage", 
-                         :slug => "#{self.name.to_slug}", :breadcrumb => "Home")
-      default_status = Radiant::Config['defaults.page.status']
-      self.homepage.status = Status[default_status] if default_status
-      default_parts = Radiant::Config['defaults.page.parts'].to_s.strip.split(/\s*,\s*/)
-      default_parts.each do |name|
-        self.homepage.parts << PagePart.new(:name => name, :filter_id => Radiant::Config['defaults.page.filter'])
-      end
-      save
-    end
-  end
-
-  def reload_routes
-    ActionController::Routing::Routes.reload
-  end
+  # def reload_routes
+  #   ActionController::Routing::Routes.reload
+  # end
 end

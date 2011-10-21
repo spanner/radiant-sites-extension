@@ -12,18 +12,20 @@ module Sites::ResourceControllerExtensions
   end
   
   # among other things this determines whether the site chooser is shown in the submenu
-
+  #
   def sited_model?
-    model_class == Page || model_class.is_site_scoped?
+    model_class == Page || model_class.has_site?
   end
   
 protected
-
+  # Extends the usual site-discovery chain to add the possibility of setting the site with a 
+  # site_id parameter, as an administrator can.
+  #
   def discover_current_site_with_input
     site_from_param || site_from_session || discover_current_site_without_input
   end
   
-  # for interface consistency we want to be able to remember site choices between requests
+  # for interface consistency we want to be able to remember administrative site choices between requests
   
   def set_session_site(site_id=nil)
     site_id ||= current_site.id.to_s if current_site.is_a? Site

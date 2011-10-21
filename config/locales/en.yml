@@ -1,0 +1,12 @@
+en:
+  activerecord:
+    attributes:
+      site:
+    errors:
+      models:
+        site:
+  site: "site"
+  sites: "Sites"
+  sites_extension:
+    misconfigured_explanation: "This installation is not configured correctly: please make sure that a site is configured to respond either to all requests or to the host %{host}"
+    misconfigured_heading: "Site Not Configured"

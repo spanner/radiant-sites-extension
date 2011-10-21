@@ -1,23 +1,16 @@
 require_dependency 'application_controller'
 
 class SitesExtension < Radiant::Extension
-  version "1.0"
-  description %{ Virtual sites with templates, scoping framework, import-export, friendly admin and userland site- (and account-) creation tools. Far from complete.}
-  url "http://spanner.org/radiant/sites"
+  version RadiantSitesExtension::VERSION
+  description RadiantSitesExtension::DESCRIPTION
+  url RadiantSitesExtension::URL
 
   def activate
-    # ActionController::Routing modules are required rather than sent as includes
-    # because the routing persists between dev. requests and is not compatible
-    # with multiple alias_method_chain calls.
-    require 'sites/route_extensions'
-    require 'sites/route_set_extensions'
-    
-    # likewise for ScopedValidation, which is a nasty hack that doesn't want to reload
+    # ScopedValidation is a nasty hack that doesn't want to reload.
     require 'sites/scoped_validation'
 
     # Model extensions
-    ActiveRecord::Base.send :include, Sites::ScopedModel
-    # Page.send :has_site
+    ActiveRecord::Base.send :include, Sites::SiteScopedModel
     Page.send :include, Sites::PageExtensions
 
     # Controller extensions

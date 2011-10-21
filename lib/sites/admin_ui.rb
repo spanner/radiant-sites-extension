@@ -17,14 +17,14 @@ module Sites::AdminUI
         # * main: edit_header, edit_form
         # * form: edit_name edit_domain edit_homepage
         # * form_bottom: edit_timestamp edit_buttons
-
+        #
         # Index view
         # * thead: title_header domain_header basedomain_header modify_header order_header
         # * tbody: title_cell domain_cell basedomain_cell modify_cell order_cell (repeating row)
         # * bottom: new_button
-
+        #
         def load_default_site_regions
-          returning OpenStruct.new do |site|
+          OpenStruct.new.tap do |site|
             site.edit = Radiant::AdminUI::RegionSet.new do |edit|
               edit.main.concat %w{edit_header edit_form}
               edit.form.concat %w{edit_name edit_domain edit_homepage}

@@ -1,7 +1,6 @@
 module Sites::PagesControllerExtensions
   def self.included(base)
     base.class_eval {
-      alias_method_chain :discover_current_site, :root
       alias_method_chain :index, :site
       alias_method_chain :continue_url, :site
       alias_method_chain :remove, :back
@@ -11,19 +10,6 @@ module Sites::PagesControllerExtensions
         redirect_to return_url || admin_pages_url(:root => model.root.id)
       end
     }
-  end
-
-  # for compatibility with the standard issue of multi_site, 
-  # a root parameter overrides other ways of setting site
-
-  def discover_current_site_with_root
-    site_from_root || discover_current_site_without_root
-  end
-
-  def site_from_root
-    if params[:root] && @homepage = Page.find(params[:root])
-      @site = @homepage.root.site
-    end
   end
 
   def index_with_site

@@ -13,7 +13,7 @@ module Sites::ScopedValidation
       # The only answer is to reach right back and change the validates_uniqueness_of method
       # and to make it more awkward, that has to happen so early that we can't reflect on the site association.
       # Hence the check for a site_id column. It's a hack, but a fairly harmless one.
-
+      #
       def validates_uniqueness_of_with_site(*attr)
         if table_exists? && column_names.include?('site_id')
           configuration = attr.extract_options!

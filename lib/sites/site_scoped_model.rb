@@ -1,6 +1,6 @@
 module Sites
   
-  module ScopedModel
+  module SiteScopedModel
     def self.included(base)
       base.extend ClassMethods
     end
@@ -28,8 +28,8 @@ module Sites
         return has_many_sites if(old_args[:shareable])
 
         class_eval <<-EO
-          extend Sites::ScopedModel::ScopedClassMethods
-          include Sites::ScopedModel::ScopedInstanceMethods
+          extend Sites::SiteScopedModel::ScopedClassMethods
+          include Sites::SiteScopedModel::ScopedInstanceMethods
         EO
         
         belongs_to :site
@@ -51,8 +51,8 @@ module Sites
         return if can_have_sites?
 
         class_eval <<-EO
-          extend Sites::ScopedModel::LinkedClassMethods
-          include Sites::ScopedModel::LinkedInstanceMethods
+          extend Sites::SiteScopedModel::LinkedClassMethods
+          include Sites::SiteScopedModel::LinkedInstanceMethods
         EO
 
         has_and_belongs_to_many :sites
@@ -131,11 +131,11 @@ module Sites
       end
     end
     module LinkedInstanceMethods
-      def has_many_sites
+      def has_many_sites?
         sites.count > 1
       end
       
-      def has_one_site
+      def has_one_site?
         sites.count == 1
       end
     end

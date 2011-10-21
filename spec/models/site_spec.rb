@@ -4,7 +4,8 @@ describe Site do
   dataset :sites
   
   before do
-    @site = Site.new :name => "Test Site", :domain => "test", :homepage_id => 1, :base_domain => "test.host", :homepage_id => page_id(:home)
+    @site = sites(:mysite)
+    Page.current_site = @site
   end
   
   it "should require a name" do
@@ -27,33 +28,7 @@ describe Site do
   
   it "should have an associated homepage" do
     @site.should respond_to(:homepage)
-    @site.homepage.should eql(pages(:home))
-  end
-  
-  it "should create a homepage on create" do
-    @site.homepage_id = nil
-    @site.save.should eql(true)
-    @site.homepage.should_not be_nil
-    @site.homepage.should be_valid
-    @site.homepage.parts.each { |part| part.should be_valid }
-    @site.homepage.should_not be_new_record
-  end
-
-  it "should respect default page status" do
-    Radiant::Config['defaults.page.status'] = :published
-    site = Site.new :name => "Test Site", :domain => "test", :base_domain => "test.host"
-    site.save
-    site.homepage.should be_published
-  end
-
-  it "should respect default page parts" do
-    Radiant::Config['defaults.page.parts'] = 'body,footnotes,other'
-    site = Site.new :name => "Test Site", :domain => "test", :base_domain => "test.host"
-    site.save
-    site.homepage.parts.size.should == 3
-    %w(body footnotes other).each do |part|
-      site.homepage.part(part).should be_kind_of(PagePart)
-    end
+    @site.homepage.should eql(pages(:myhomepage))
   end
   
   it "should find site for hostname" do
@@ -73,11 +48,4 @@ describe Site do
     sites(:mysite).dev_url("/about").should eql("http://dev.mysite.domain.com/about")
   end
   
-  describe "#save" do
-    it "should reload routes" do
-      ActionController::Routing::Routes.should_receive(:reload)
-      @site.save
-    end
-  end
-
 end

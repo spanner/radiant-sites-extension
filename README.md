@@ -4,15 +4,12 @@ Developed from the original `multi_site` extension, itself inspired by the old v
 
 This is extension is in development and only works in places. It takes our fork of multi_site and improves on it here and there. Soon it will add site templates, import-export, subdomain-creation and other requirements for creating new sites on the fly. Some of these features may later spin off into their own extensions, but we'll start them off together here and see what happens.
 
-Some of this is likely to move into core, but only the very essential parts that allow sites to happen at all.
-
 ## Status
 
-If it works, it's by accident.
+Provisionally working, but bugs are likely. Not suitable for production use.
 
 ### To do ###
 
-* Change interface to `has_site` and `has_many_sites` to allow, for example, a user access to some but not all sites.
 * Site-scoped (and global) Radiant::Config (without breaking the cache) 
 * YAML site templates and chooser 
 * Non-horrible site admin interface

@@ -7,19 +7,18 @@ describe SiteController do
     # I don't know why we're not getting the site routes
     # possibly because of the routing tests?
     # but without them, controller tests fail
-    ActionController::Routing::Routes.draw do |map|
-      map.connect '*url', :controller => 'site', :action => 'show_page'
-    end
+    # ActionController::Routing::Routes.draw do |map|
+    #   map.connect '*url', :controller => 'site', :action => 'show_page'
+    # end
   end
   
   describe "with a request that matches no site" do
     before do
       Page.current_site = nil
-      @host = 'nosite.domain.com'
-      controller.request.stub!(:host).and_return(@host)
+      request.stub!(:host).and_return('nosite.domain.com')
     end
     
-    it "should have chosen the catchall site" do
+    it "should have chosen the default site" do
       Page.should_receive(:current_site=).with(sites(:default)).at_least(:once)
       get :show_page, :url => '/'
     end
@@ -28,8 +27,7 @@ describe SiteController do
   describe "with a request that matches a site" do
     before do
       Page.current_site = nil
-      @host = 'yoursite.domain.com'
-      controller.request.stub!(:host).and_return(@host)
+      request.stub!(:host).and_return('yoursite.domain.com')
     end
         
     it "should have chosen the matching site" do

@@ -16,7 +16,7 @@ module Sites::ApplicationControllerExtensions
   end
 
   # this is overridden in Admin::ResourceController to respond correctly
-  
+  #
   def sited_model?
     false
   end
@@ -28,13 +28,13 @@ protected
   end
   
   # chains will attach here
-  
+  #
   def discover_current_site
     site_from_host
   end
   
   # and add more ways to determine the current site
-  
+  #
   def site_from_host
     Site.find_for_host(request.host)
   end
