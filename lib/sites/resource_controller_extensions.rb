@@ -29,7 +29,6 @@ protected
   
   def set_session_site(site_id=nil)
     site_id ||= current_site.id.to_s if current_site.is_a? Site
-    Rails.logger.warn "set_session_site: #{site_id}"
     session[:site_id] = site_id
   end
 
