@@ -14,7 +14,7 @@ module Sites::ResourceControllerExtensions
   # among other things this determines whether the site chooser is shown in the submenu
   #
   def sited_model?
-    model_class == Page || model_class.has_site?
+    model_class.has_site?
   end
   
 protected
@@ -29,6 +29,7 @@ protected
   
   def set_session_site(site_id=nil)
     site_id ||= current_site.id.to_s if current_site.is_a? Site
+    Rails.logger.warn "set_session_site: #{site_id}"
     session[:site_id] = site_id
   end
 
