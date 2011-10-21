@@ -4,6 +4,7 @@ module Sites::PageExtensions
   def self.included(base)
     base.class_eval {
       has_site
+      mattr_accessor :current_site
       has_one :homed_site, :foreign_key => "homepage_id", :dependent => :nullify, :class_name => 'Site'
       alias_method_chain :path, :sites
     }
